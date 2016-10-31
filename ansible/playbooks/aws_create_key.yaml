@@ -1,0 +1,42 @@
+- hosts: localhost
+  gather_facts: false
+  become: false
+  vars:
+    DNSDomain: example.li9.com
+    KeyName: samplekey
+  tasks: 
+    - name: check that AWS_ACCESS_KEY and AWS_SECRET_ACCESS_KEY are set
+      shell: '[[ -n  $AWS_ACCESS_KEY && -n $AWS_SECRET_ACCESS_KEY  ]]'
+      ignore_errors: true
+      changed_when: false
+      register: aws_cred
+   
+    - name: display error message if AWS_ACCESS_KEY or AWS_SECRET_ACCESS_KEY are not set
+      fail: msg="Seems AWS_ACCESS_KEY or AWS_SECRET_ACCESS_KEY bash environment variables were not exported"
+      when: aws_cred|failed
+
+    - name: create key pair
+      ec2_key:
+        name: "{{KeyName}}"
+        ec2_region: us-east-1
+      register: ec2_key
+
+    - name: save private key
+      copy:
+        content: "{{ ec2_key.key.private_key }}" 
+        dest: "./{{KeyName}}.pem" 
+        mode: 0600
+
+    - name: launch ansible cloudformation example
+      cloudformation:
+        stack_name: "ansible-cloudformation" 
+        state: "present"
+        region: "us-east-1" 
+        disable_rollback: true
+        template: "/home/neon/projects/li9demoenvironment/openshift/cloudformation/openshift-infrastructre.json"
+        template_parameters:
+          KeyName: "{{KeyName}}"
+          DNSDomain: "{{DNSDomain}}"
+        tags:
+          Stack: "ansible-cloudformation"
+
