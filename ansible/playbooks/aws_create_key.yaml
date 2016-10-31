@@ -3,7 +3,7 @@
   become: false
   vars:
     DNSDomain: example.li9.com
-    KeyName: samplekey
+    KeyName: openshift_aws
   tasks: 
     - name: check that AWS_ACCESS_KEY and AWS_SECRET_ACCESS_KEY are set
       shell: '[[ -n  $AWS_ACCESS_KEY && -n $AWS_SECRET_ACCESS_KEY  ]]'
@@ -15,7 +15,7 @@
       fail: msg="Seems AWS_ACCESS_KEY or AWS_SECRET_ACCESS_KEY bash environment variables were not exported"
       when: aws_cred|failed
 
-    - name: create key pair
+    - name: create key pair {{KeyName}}
       ec2_key:
         name: "{{KeyName}}"
         ec2_region: us-east-1
@@ -24,8 +24,9 @@
     - name: save private key
       copy:
         content: "{{ ec2_key.key.private_key }}" 
-        dest: "./{{KeyName}}.pem" 
+        dest: "~/{{KeyName}}.pem" 
         mode: 0600
+      when: ec2_key|changed
 
     - name: launch ansible cloudformation example
       cloudformation:
@@ -39,4 +40,11 @@
           DNSDomain: "{{DNSDomain}}"
         tags:
           Stack: "ansible-cloudformation"
+      register: cloudformation_results
+
+    - name: show variable
+      debug: var=cloudformation_results
+
+    - name: display output.stack_outputs.OpenShiftMaster
+      debug: msg="Stack outputs {{cloudformation_results.output.stack_outputs.OpenShiftMaster}}"
 
