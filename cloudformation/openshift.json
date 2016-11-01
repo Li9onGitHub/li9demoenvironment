@@ -550,7 +550,19 @@
         "KeyName": {
           "Ref": "KeyName"
         },
-        "ImageId": { "Fn::FindInMap" : [ "RegionToAMI", { "Ref" : "AWS::Region" }, "rhel"]}
+        "ImageId": { "Fn::FindInMap" : [ "RegionToAMI", { "Ref" : "AWS::Region" }, "rhel"]},
+        "BlockDeviceMappings" : [
+               {
+                  "DeviceName" : "/dev/xvdh",
+                  "Ebs" : {
+                     "VolumeType" : "io1",
+                     "Iops" : "100",
+                     "DeleteOnTermination" : "true",
+                     "VolumeSize" : "9"
+                  }
+               }
+        ]
+
       }
     },
 
@@ -582,7 +594,19 @@
         "KeyName": {
           "Ref": "KeyName"
         },
-        "ImageId": { "Fn::FindInMap" : [ "RegionToAMI", { "Ref" : "AWS::Region" }, "rhel"]}
+        "ImageId": { "Fn::FindInMap" : [ "RegionToAMI", { "Ref" : "AWS::Region" }, "rhel"]},
+        "BlockDeviceMappings" : [
+               {
+                  "DeviceName" : "/dev/xvdh",
+                  "Ebs" : {
+                     "VolumeType" : "io1",
+                     "Iops" : "100",
+                     "DeleteOnTermination" : "true",
+                     "VolumeSize" : "9"
+                  }  
+               }  
+        ]      
+
 
       }
     },
@@ -616,65 +640,22 @@
         "KeyName": {
           "Ref": "KeyName"
         },
-        "ImageId": { "Fn::FindInMap" : [ "RegionToAMI", { "Ref" : "AWS::Region" }, "rhel"]}
-      }
-    },
+        "ImageId": { "Fn::FindInMap" : [ "RegionToAMI", { "Ref" : "AWS::Region" }, "rhel"]},
+        "BlockDeviceMappings" : [
+               {
+                  "DeviceName" : "/dev/xvdh",
+                  "Ebs" : {
+                     "VolumeType" : "io1",
+                     "Iops" : "100",
+                     "DeleteOnTermination" : "true",
+                     "VolumeSize" : "9"
+                  }  
+               }  
+        ]      
 
-    "Volume1" : {
-      "Type" : "AWS::EC2::Volume",
-      "Properties" : {
-        "Size" : "14", 
-        "VolumeType" : "io1",
-        "Iops" : "100",
-        "AvailabilityZone" : { "Fn::GetAtt" : [ "OpenShiftMaster", "AvailabilityZone" ] }
-      }
-    },
-    "Volume2" : {
-      "Type" : "AWS::EC2::Volume",
-      "Properties" : {
-        "Size" : "14", 
-        "VolumeType" : "io1",
-        "Iops" : "100",
-        "AvailabilityZone" : { "Fn::GetAtt" : [ "OpenShiftNode01", "AvailabilityZone" ] }
-      }
-    },
-    "Volume3" : {
-      "Type" : "AWS::EC2::Volume",
-      "Properties" : {
-        "Size" : "14", 
-        "VolumeType" : "io1",
-        "Iops" : "100",
-        "AvailabilityZone" : { "Fn::GetAtt" : [ "OpenShiftNode02", "AvailabilityZone" ] }
-      }
-    },
-
-    "MountPoint" : {
-      "Type" : "AWS::EC2::VolumeAttachment",
-      "DependsOn" : [ "OpenShiftMaster",  "Volume1" ],
-      "Properties" : {
-         "InstanceId" : { "Ref" : "OpenShiftMaster" },
-         "VolumeId"  : { "Ref" : "Volume1" },
-         "Device" : "/dev/sdh"
-      }
-    },
-    "MountPoint" : {
-      "Type" : "AWS::EC2::VolumeAttachment",
-      "DependsOn" : [ "OpenShiftNode01",  "Volume2" ],
-      "Properties" : {
-         "InstanceId" : { "Ref" : "OpenShiftNode01" },
-         "VolumeId"  : { "Ref" : "Volume2" },
-         "Device" : "/dev/sdh"
-      }
-    },
-    "MountPoint" : {
-      "Type" : "AWS::EC2::VolumeAttachment",
-      "DependsOn" : [ "OpenShiftNode02",  "Volume3" ],
-      "Properties" : {
-         "InstanceId" : { "Ref" : "OpenShiftNode02" },
-         "VolumeId"  : { "Ref" : "Volume3" },
-         "Device" : "/dev/sdh"
       }
     }
+
 
 
 

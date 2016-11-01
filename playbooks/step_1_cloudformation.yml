@@ -35,7 +35,7 @@
         state: "present"
         region: "us-east-1" 
         disable_rollback: true
-        template: "openshift-infrastructre.json"
+        template: "cloudformation/openshift.json"
         template_parameters:
           KeyName: "{{KeyName}}"
           DNSDomain: "{{DNSDomain}}"
@@ -47,5 +47,5 @@
       debug: var=cloudformation_results
 
     - name: create ansible inventory file
-      template: src=inventory.j2 dest=./inventory
+      template: src=templates/inventory.j2 dest=./inventory
 
