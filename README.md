@@ -14,7 +14,7 @@ This project automates initial configuration of OpenShift 3.x nodes (masters and
 yum -y install ansible git
 ```
 
-# Directory strucutre
+# Directory structure
 - ansible.cfg
 	Local Ansible configiration file
 - inventory
@@ -104,7 +104,7 @@ Once it is finshed the following resources should be available:
 	- OpenShiftMaster
 	- OpenShiftNode01
 	- OpenShiftNode02
-- EC2 Volumes (9G additional storage for each instance)
+- EC2 Volumes (9G additional storage(as /dev/xvdh) for each instance)
 - Several Security Groups
 - openshift_aws.pem which is available in user home directory
 - "inventory" file located in root project directory
@@ -116,7 +116,17 @@ Since inventory file is available ansible should be able to reach all nodes (1xM
 	``` 
 
 # Usage - configured instances
+1. **Get Red Hat OpenShift subscription**
+ Automation uses Red Hat subscription to install OpenShift packages. As part for the subscription the following information must be available:
+ - username
+ - password
 
-
-
+2. **Run pre configuration playbook**
+	```
+	ansible-playbook -e 'redhat_user=<REDHATUSER>  redhat_password=<REDHATPASSWORD>' playbooks/step_2_pre_configure_systems.yml		 
+	```
+	Example:
+	```
+	ansible-playbook -e 'redhat_user=artemi.kropachev@li9.com redhat_password=MyPassword' playbooks/step_2_pre_configure_systems.ym		
+	```
 
