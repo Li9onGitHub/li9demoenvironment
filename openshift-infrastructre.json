@@ -364,14 +364,14 @@
           },
           {
             "IpProtocol": "tcp",
-            "FromPort": "1-65535",
-            "ToPort": "1-65535",
+            "FromPort": "0",
+            "ToPort": "65535",
             "CidrIp": "10.0.0.0/24"
           },
           {
             "IpProtocol": "udp",
-            "FromPort": "1-65535",
-            "ToPort": "1-65535",
+            "FromPort": "0",
+            "ToPort": "65535",
             "CidrIp": "10.0.0.0/24"
           }
 
@@ -603,7 +603,6 @@
             "GroupSet": [
               { "Ref": "NodeSecGroup" },
               { "Ref": "CommonSecGroup" }
-            ],
             ],
             "AssociatePublicIpAddress": "true",
             "PrivateIpAddress": "10.0.0.13",
