@@ -7,6 +7,9 @@ This project automates initial configuration of OpenShift 3.x nodes (masters and
 - OS: Linux
 - Ansible installed
 - git
+```
+yum -y install ansible git
+```
 
 # Usage
 1. Pull source code
