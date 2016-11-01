@@ -1,11 +1,11 @@
 [master]
-52.201.241.253 hostname=master01.li9.local
+54.210.67.79 hostname=master01.li9.local
 
 [node01]
-54.147.194.213  hostname=node01.li9.local
+54.146.187.108  hostname=node01.li9.local
 
 [node02]
-54.158.136.50 hostname=node02.li9.local
+54.161.204.90 hostname=node02.li9.local
 
 [nodes:children]
 node01

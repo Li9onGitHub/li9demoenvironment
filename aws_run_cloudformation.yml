@@ -35,7 +35,7 @@
         state: "present"
         region: "us-east-1" 
         disable_rollback: true
-        template: "/home/neon/projects/li9demoenvironment/openshift/cloudformation/openshift-infrastructre.json"
+        template: "openshift-infrastructre.json"
         template_parameters:
           KeyName: "{{KeyName}}"
           DNSDomain: "{{DNSDomain}}"
@@ -46,6 +46,6 @@
     - name: show variable
       debug: var=cloudformation_results
 
-    - name: display output.stack_outputs.OpenShiftMaster
-      debug: msg="Stack outputs {{cloudformation_results.output.stack_outputs.OpenShiftMaster}}"
+    - name: create ansible inventory file
+      template: src=inventory.j2 dest=./inventory
 

@@ -335,6 +335,52 @@
         }
       }
     },
+
+    "CommonSecGroup": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "VpcId": {
+          "Ref": "VPC"
+        },
+        "GroupDescription": "General services",
+        "SecurityGroupIngress": [
+          { 
+            "IpProtocol": "tcp",
+            "FromPort": "22",
+            "ToPort": "22",
+            "CidrIp": "0.0.0.0/0"
+          },
+          { 
+            "IpProtocol": "udp",
+            "FromPort": "53",
+            "ToPort": "53",
+            "CidrIp": "0.0.0.0/0"
+          },
+          { 
+            "IpProtocol": "icmp",
+            "FromPort": "8",
+            "ToPort": "-1",
+            "CidrIp": "0.0.0.0/0"
+          },
+          {
+            "IpProtocol": "tcp",
+            "FromPort": "1-65535",
+            "ToPort": "1-65535",
+            "CidrIp": "10.0.0.0/24"
+          },
+          {
+            "IpProtocol": "udp",
+            "FromPort": "1-65535",
+            "ToPort": "1-65535",
+            "CidrIp": "10.0.0.0/24"
+          }
+
+        ]
+      }
+    },
+
+
+
     "etcdSecGroup": {
       "Type": "AWS::EC2::SecurityGroup",
       "Properties": {
@@ -489,7 +535,8 @@
             "GroupSet": [
               { "Ref": "MasterSecGroup" },
  	      { "Ref": "etcdSecGroup" },
-              { "Ref": "InfraNodeSecGroup" }
+              { "Ref": "InfraNodeSecGroup" },
+ 	      { "Ref": "CommonSecGroup" }
             ],
             "AssociatePublicIpAddress": "true",
             "PrivateIpAddress": "10.0.0.11",
@@ -520,9 +567,8 @@
         "NetworkInterfaces": [
           {
             "GroupSet": [
-              {
-                "Ref": "NodeSecGroup"
-              }
+              { "Ref": "NodeSecGroup" },
+	      {	"Ref": "CommonSecGroup" }
             ],
             "AssociatePublicIpAddress": "true",
             "PrivateIpAddress": "10.0.0.12",
@@ -555,9 +601,9 @@
         "NetworkInterfaces": [
           {
             "GroupSet": [
-              {
-                "Ref": "NodeSecGroup"
-              }
+              { "Ref": "NodeSecGroup" },
+              { "Ref": "CommonSecGroup" }
+            ],
             ],
             "AssociatePublicIpAddress": "true",
             "PrivateIpAddress": "10.0.0.13",
