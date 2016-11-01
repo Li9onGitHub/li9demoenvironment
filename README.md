@@ -84,6 +84,7 @@ yum -y install ansible git
 	vi config.yml
 	```
 Here you are able to specify the following:
+
 | Name            | Default Value          | Description                                                                    |
 |-----------------|------------------------|--------------------------------------------------------------------------------|
 | publicdomain    | example.li9.com        | Public DNS domain                                                              |
