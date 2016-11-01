@@ -62,15 +62,15 @@ yum -y install ansible git
     └── inventory.j2
 ```
 
-# Usage
-1. *Pull source code*
+# Usage - create instances
+1. **Pull source code**
 
 	```
 	cd ~
 	git clone  https://github.com/Li9onGitHub/li9demoenvironment.git
 	cd li9demoenvironment
 	```
-2. *Configure AWS access*
+2. **Configure AWS access**
 
 	Automation requires access to AWS using ACCESS and SECRET_ACCESS keys. This parametres can be found on AWS portal.
 	You should configure shell variables before using automation.
@@ -79,7 +79,7 @@ yum -y install ansible git
 	export AWS_SECRET_ACCESS_KEY='+...'
 	```
 
-3. *Deploy AWS OpenShift Infrastructure*
+3. **Deploy AWS OpenShift Infrastructure**
 	
 	To deploy required instances in AWS run step_1_cloudformation.yaml  playbook
 	```
@@ -90,23 +90,33 @@ Note! it is possible to define StackName as an ansible variable (ansibleopenshif
 	ansible-playbook -e "StackName=MyOpenShift" playbooks/step_1_cloudformation.yml
 	```
 
-4. Check Stack Outputs (external IP addresses of nodes)
+## tasks outputs
+step_1_cloudformation.yml playbook does the following:
+- creates keypair openshift_aws at AWS EC2
+	This keypair will be used for all instances
+- downloads private key as ~/openshift_aws.pem
+- applies cloudformation template cloudformation/openshift.json
 
-5. Modify inventory (IP addresses of servers)
+Once it is finshed the following resources should be available:
+- VPC (10.0.0.0/16)
+- Subnet (10.0.0.0/24)
+- EC2 instances:
+	- OpenShiftMaster
+	- OpenShiftNode01
+	- OpenShiftNode02
+- EC2 Volumes (9G additional storage for each instance)
+- Several Security Groups
+- openshift_aws.pem which is available in user home directory
+- "inventory" file located in root project directory
 
-```
-vim inventory
-```
-Example:
-```
-[master]
-52.201.241.253 hostname=master01.li9.local
+## verify
+Since inventory file is available ansible should be able to reach all nodes (1xMaster, 2xNodes)
+	```
+	ansible -m ping all
+	``` 
 
-[node01]
-54.147.194.213  hostname=node01.li9.local
+# Usage - configured instances
 
-[node02]
-54.158.136.50 hostname=node02.li9.local
-...
-```
+
+
 
