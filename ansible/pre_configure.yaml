@@ -1,0 +1,40 @@
+---
+- hosts: master
+  become: true
+  roles:
+   - dnsserver
+#  post_tasks:
+#   - fail: msg="fail"
+
+- hosts: all
+  become: true
+  roles:
+   - openshiftcommon
+
+- hosts: master
+  become: true
+  vars:
+   root_public_key: ~/openshift_public.key
+  tasks:
+   - name: generate key file
+     user: name=root generate_ssh_key=yes ssh_key_bits=2048 ssh_key_file=.ssh/id_rsa
+     register: key_results
+
+   - debug: var=key_results
+
+   - name: save ssh public key localy
+     copy:
+      content: "{{ key_results.ssh_public_key }}\n"
+      dest: "{{root_public_key}}"
+      mode: 0600
+     become: no
+     delegate_to: 127.0.0.1
+
+- hosts: all
+  become: true
+  tasks:
+   - name: copy root public key to all hosts
+     copy: src=~/openshift_public.key dest=/root/.ssh/
+
+   - name: adding root public key to authorized_keys
+     shell: cat /root/.ssh/openshift_public.key >>/root/.ssh/authorized_keys

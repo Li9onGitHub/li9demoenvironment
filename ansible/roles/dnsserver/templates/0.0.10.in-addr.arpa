@@ -1,0 +1,14 @@
+$ORIGIN 0.0.10.in-addr.arpa.
+$TTL 86400
+@	IN	SOA	master01.{{localdomain}}.	hostmaster.{{localdomain}}. (
+			2001062501 ; serial
+			21600      ; refresh after 6 hours
+			3600       ; retry after 1 hour
+			604800     ; expire after 1 week
+			86400 )    ; minimum TTL of 1 day
+;
+@	IN	NS	master01.{{localdomain}}.
+;
+11	IN	PTR	master01.{{localdomain}}.
+12	IN	PTR	node01.{{localdomain}}.
+13      IN      PTR     node02.{{localdomain}}.

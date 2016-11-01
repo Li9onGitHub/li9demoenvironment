@@ -1,0 +1,24 @@
+---
+- name: install bind pakages
+  yum: name={{item}} state=installed
+  with_items:
+   - bind
+   - bind-utils
+
+- name: confiure zone directory
+  file: path=/var/named/zones state=directory owner=root group=named
+
+- name: create DNS zone file
+  template: src=templates/local.zone dest=/var/named/zones/{{localdomain}} owner=root group=named mode=0640
+  notify: restart named
+
+- name: create DNS zone file - reverse
+  template: src=templates/0.0.10.in-addr.arpa dest=/var/named/zones/0.0.10.in-addr.arpa owner=root group=named mode=0640
+  notify: restart named
+
+- name: conigure named.conf
+  template: src=templates/named.conf dest=/etc/named.conf owner=root group=named
+  notify: restart named
+  
+- name: start and enable named
+  service: name=named state=started enabled=yes

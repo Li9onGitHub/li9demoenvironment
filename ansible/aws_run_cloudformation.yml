@@ -4,6 +4,7 @@
   vars:
     DNSDomain: example.li9.com
     KeyName: openshift_aws
+    StackName: ansibleopenshift
   tasks: 
     - name: check that AWS_ACCESS_KEY and AWS_SECRET_ACCESS_KEY are set
       shell: '[[ -n  $AWS_ACCESS_KEY && -n $AWS_SECRET_ACCESS_KEY  ]]'
@@ -30,7 +31,7 @@
 
     - name: launch ansible cloudformation example
       cloudformation:
-        stack_name: "ansible-cloudformation" 
+        stack_name: "{{StackName}}" 
         state: "present"
         region: "us-east-1" 
         disable_rollback: true

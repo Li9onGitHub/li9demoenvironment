@@ -1,0 +1,2 @@
+DEVS={{docker_disk}}
+VG=docker-vg

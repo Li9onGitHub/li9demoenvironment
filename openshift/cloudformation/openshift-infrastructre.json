@@ -524,7 +524,7 @@
                 "Ref": "NodeSecGroup"
               }
             ],
-            "AssociatePublicIpAddress": "false",
+            "AssociatePublicIpAddress": "true",
             "PrivateIpAddress": "10.0.0.12",
             "DeviceIndex": "0",
             "DeleteOnTermination": "true",
@@ -559,7 +559,7 @@
                 "Ref": "NodeSecGroup"
               }
             ],
-            "AssociatePublicIpAddress": "false",
+            "AssociatePublicIpAddress": "true",
             "PrivateIpAddress": "10.0.0.13",
             "DeviceIndex": "0",
             "DeleteOnTermination": "true",
@@ -575,7 +575,7 @@
       }
     },
 
-    "MasterVolume1" : {
+    "Volume1" : {
       "Type" : "AWS::EC2::Volume",
       "Properties" : {
         "Size" : "14", 
@@ -584,7 +584,7 @@
         "AvailabilityZone" : { "Fn::GetAtt" : [ "OpenShiftMaster", "AvailabilityZone" ] }
       }
     },
-    "Node01Volume1" : {
+    "Volume2" : {
       "Type" : "AWS::EC2::Volume",
       "Properties" : {
         "Size" : "14", 
@@ -593,7 +593,7 @@
         "AvailabilityZone" : { "Fn::GetAtt" : [ "OpenShiftNode01", "AvailabilityZone" ] }
       }
     },
-    "Node02Volume1" : {
+    "Volume3" : {
       "Type" : "AWS::EC2::Volume",
       "Properties" : {
         "Size" : "14", 
@@ -605,26 +605,29 @@
 
     "MountPoint" : {
       "Type" : "AWS::EC2::VolumeAttachment",
+      "DependsOn" : [ "OpenShiftMaster",  "Volume1" ],
       "Properties" : {
          "InstanceId" : { "Ref" : "OpenShiftMaster" },
-         "VolumeId"  : { "Ref" : "MasterVolume1" },
-         "Device" : "/dev/xvdh"
+         "VolumeId"  : { "Ref" : "Volume1" },
+         "Device" : "/dev/sdh"
       }
     },
     "MountPoint" : {
       "Type" : "AWS::EC2::VolumeAttachment",
+      "DependsOn" : [ "OpenShiftNode01",  "Volume2" ],
       "Properties" : {
          "InstanceId" : { "Ref" : "OpenShiftNode01" },
-         "VolumeId"  : { "Ref" : "Node01Volume1" },
-         "Device" : "/dev/xvdh"
+         "VolumeId"  : { "Ref" : "Volume2" },
+         "Device" : "/dev/sdh"
       }
     },
     "MountPoint" : {
       "Type" : "AWS::EC2::VolumeAttachment",
+      "DependsOn" : [ "OpenShiftNode02",  "Volume3" ],
       "Properties" : {
          "InstanceId" : { "Ref" : "OpenShiftNode02" },
-         "VolumeId"  : { "Ref" : "Node02Volume1" },
-         "Device" : "/dev/xvdh"
+         "VolumeId"  : { "Ref" : "Volume3" },
+         "Device" : "/dev/sdh"
       }
     }
 
@@ -632,7 +635,7 @@
 
   },
   "Outputs": {
-    "OpenShiftMaster": {
+    "Master": {
       "Description": "master01.demo.li9.com master01",
       "Value": {
         "Fn::GetAtt": [
@@ -640,7 +643,27 @@
           "PublicIp"
         ]
       }
+    },
+    "Node01": {
+      "Description": "node01.demo.li9.com node01",
+      "Value": {
+        "Fn::GetAtt": [
+          "OpenShiftNode01",
+          "PublicIp"
+        ]
+      }
+    },
+    "Node02": {
+      "Description": "node02.demo.li9.com node02",
+      "Value": {
+        "Fn::GetAtt": [
+          "OpenShiftNode02",
+          "PublicIp"
+        ]
+      }
     }
+
+
 
 
   }

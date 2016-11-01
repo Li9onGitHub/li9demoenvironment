@@ -1,0 +1,88 @@
+---
+- name: set fixed hostname
+  hostname: name={{hostname}}
+
+- name: configure local /etc/hosts
+  template: src=templates/hosts dest=/etc/hosts
+
+- name: configure /etc/resolv.comf
+  copy: dest=/etc/resolv.conf content="search {{localdomain}} {{publicdomain}}\nnameserver 10.0.0.11\nnameserver 8.8.8.8"
+
+- name: register host on redhat
+  redhat_subscription: state=present username={{redhat_user}} password={{redhat_password}} autosubscribe=true
+  register: redhat_subscription
+
+- name: get pool ID
+  shell: subscription-manager list --available --all|grep "Pool ID:"|awk '{print $3}'
+  register: pool_id
+
+#- debug: var=pool_id
+#- name: attach system to subscription
+#  shell: subscription-manager attach --pool {{pool_id.stdout}}
+#  ignore_errors: true
+
+- name: disable all repos
+  command: subscription-manager repos --disable="*"
+
+- name: enable required repos
+  command: subscription-manager repos --enable="rhel-7-server-rpms" --enable="rhel-7-server-extras-rpms"  --enable="rhel-7-server-ose-3.3-rpms"
+
+- name: install additional packages
+  yum: name={{item}} state=installed
+  with_items:
+   - wget
+   - git
+   - net-tools
+   - bind-utils
+   - iptables-services
+   - bridge-utils
+   - python-virtualenv
+   - gcc
+   - bash-completion
+
+- name: update packages
+  yum: name=* state=latest
+
+- name: install atomic-openshift-utils
+  yum: name=atomic-openshift-utils state=installed enablerepo=rhel-7-server-ose-3.3-rpms
+
+- name: install docker package
+  yum: name=docker state=installed  enablerepo=rhui-REGION-rhel-server-extras
+
+#- name: create admin user
+#  user: name=admin shell=/bin/bash createhome=yes comment="Admin User" password={{admin_user_password}}
+
+- name: disable NetworkManager
+  service: name=NetworkManager enabled=no state=stopped
+  ignore_errors: true
+
+- name: remove NetworkManager package
+  yum: name=NetworkManager state=absent
+
+- name: enable network service
+  service: name=network enabled=yes
+
+- name: stop and disable firewalld
+  service: name=firewalld state=stopped enabled=no
+  ignore_errors: true
+
+- name: stop and disable cloudinit
+  service: name=cloud-init state=stopped enabled=no
+
+- name: configure docker
+  template: src=templates/sysconfig.docker dest=/etc/sysconfig/docker
+
+- name: configure docker-storage-setup config file
+  template: src=templates/sysconfig.docker-storage-setup dest=/etc/sysconfig/docker-storage-setup
+
+- name: configuring docker storage
+  command: docker-storage-setup 
+  args:
+   creates: /dev/docker-vg
+
+- name: start and enable docker service
+  service: name=docker state=started enabled=yes
+
+- name: disable StrictHostKeyChecking in ssh client config
+  lineinfile: dest=/etc/ssh/ssh_config line='StrictHostKeyChecking no' state=present insertafter="SendEnv XMODIFIERS"
+

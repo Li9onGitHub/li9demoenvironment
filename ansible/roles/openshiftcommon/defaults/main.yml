@@ -1,0 +1,5 @@
+---
+admin_user_password: password
+docker_disk: /dev/xvdh
+publicdomain: demo.li9.com
+localdomain: li9.local
