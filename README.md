@@ -25,7 +25,7 @@ yum -y install ansible git
 	Directory which contains ansible playbooks used for automation purposes
 - templates
 	File templates used by ansible template module
-
+```
 ├── ansible.cfg
 ├── cloudformation
 │   └── openshift.json
@@ -60,15 +60,18 @@ yum -y install ansible git
 │           └── sysconfig.docker-storage-setup
 └── templates
     └── inventory.j2
+```
 
 # Usage
-1. Pull source code
+1. *Pull source code*
+
 	```
 	cd ~
 	git clone  https://github.com/Li9onGitHub/li9demoenvironment.git
 	cd li9demoenvironment
 	```
-2. Configure AWS access
+2. *Configure AWS access*
+
 	Automation requires access to AWS using ACCESS and SECRET_ACCESS keys. This parametres can be found on AWS portal.
 	You should configure shell variables before using automation.
 	```
@@ -76,15 +79,16 @@ yum -y install ansible git
 	export AWS_SECRET_ACCESS_KEY='+...'
 	```
 
-3. Deploy AWS OpenShift Infrastructure
+3. *Deploy AWS OpenShift Infrastructure*
 	
+	To deploy required instances in AWS run step_1_cloudformation.yaml  playbook
 	```
-	ansible-playbook aws_run_cloudformation.yml 
+	ansible-playbook playbooks/step_1_cloudformation.yml
 	```
-Note! it is possible to define StackName as an asible variale
-```
-ansible-playbook -e "StackName=MyOpenShift" aws_run_cloudformation.yml
-```
+Note! it is possible to define StackName as an ansible variable (ansibleopenshift will be used by default if it is not specified)
+	```
+	ansible-playbook -e "StackName=MyOpenShift" playbooks/step_1_cloudformation.yml
+	```
 
 4. Check Stack Outputs (external IP addresses of nodes)
 
