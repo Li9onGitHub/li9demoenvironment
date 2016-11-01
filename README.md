@@ -79,7 +79,22 @@ yum -y install ansible git
 	export AWS_SECRET_ACCESS_KEY='+...'
 	```
 
-3. **Deploy AWS OpenShift Infrastructure**
+3. **Configure installation parameters**
+	```
+	vi config.yml
+	```
+Here you are able to specify the following:
+| Name            | Default Value          | Description                                                                    |
+|-----------------|------------------------|--------------------------------------------------------------------------------|
+| publicdomain    | example.li9.com        | Public DNS domain                                                              |
+| localdomain     | example.li9.local      | Local DNS domain. Will be applied to create local hosts file and set hostnames |
+| KeyName         | openshift_aws          | Key Pari name (for AWS EC2)                                                    |
+| StackName       | ansibleopenshift       | StackName for CloudFormation                                                   |
+| root_public_key | ~/openshift_public.key |                                                                                |
+| docker_disk     | /dev/xvdh              | Path to block device                                                           |
+
+
+4. **Deploy AWS OpenShift Infrastructure**
 	
 	To deploy required instances in AWS run step_1_cloudformation.yaml  playbook
 	```
@@ -115,7 +130,7 @@ Since inventory file is available ansible should be able to reach all nodes (1xM
 	ansible -m ping all
 	``` 
 
-# Usage - configured instances
+# Usage - configure instances
 1. **Get Red Hat OpenShift subscription**
  Automation uses Red Hat subscription to install OpenShift packages. As part for the subscription the following information must be available:
  - username
@@ -127,6 +142,6 @@ Since inventory file is available ansible should be able to reach all nodes (1xM
 	```
 	Example:
 	```
-	ansible-playbook -e 'redhat_user=artemi.kropachev@li9.com redhat_password=MyPassword' playbooks/step_2_pre_configure_systems.ym		
+	ansible-playbook -e 'redhat_user=artemi.kropachev@li9.com redhat_password=MyPassword' playbooks/step_2_pre_configure_systems.yml
 	```
 
