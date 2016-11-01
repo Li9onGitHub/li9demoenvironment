@@ -15,12 +15,14 @@ cd ~
 git clone  https://github.com/Li9onGitHub/li9demoenvironment.git
 cd li9demoenvironment
 ```
+
 2. Configure AWS access shell variables
 Note! This parametres can be found on AWS portal
 ```
 export AWS_ACCESS_KEY='...'
 export AWS_SECRET_ACCESS_KEY='+...'
 ```
+
 3. Run AWS infrastrucure provisioning
 ```
 ansible-playbook aws_run_cloudformation.yml 
@@ -31,6 +33,7 @@ ansible-playbook -e "StackName=MyOpenShift" aws_run_cloudformation.yml
 ```
 
 4. Check Stack Outputs (external IP addresses of nodes)
+
 5. Modify inventory (IP addresses of servers)
 ```
 vim inventory
@@ -47,3 +50,4 @@ Example:
 54.158.136.50 hostname=node02.li9.local
 ...
 ```
+
