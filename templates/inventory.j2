@@ -1,11 +1,11 @@
 [master]
-{{cloudformation_results.stack_outputs.Master}}  hostname=master01.li9.local
+{{cloudformation_results.stack_outputs.Master}}  hostname=master01.{{localdomain}}
 
 [node01]
-{{cloudformation_results.stack_outputs.Node01}}  hostname=node01.li9.local
+{{cloudformation_results.stack_outputs.Node01}}  hostname=node01.{{localdomain}}
 
 [node02]
-{{cloudformation_results.stack_outputs.Node02}} hostname=node02.li9.local
+{{cloudformation_results.stack_outputs.Node02}} hostname=node02.{{localdomain}}
 
 [nodes:children]
 node01

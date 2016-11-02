@@ -1,10 +1,8 @@
 - hosts: localhost
   gather_facts: false
   become: false
-  vars:
-    DNSDomain: example.li9.com
-    KeyName: openshift_aws
-    StackName: ansibleopenshift
+  vars_files:
+    - ../config.yml
   tasks: 
     - name: check that AWS_ACCESS_KEY and AWS_SECRET_ACCESS_KEY are set
       shell: '[[ -n  $AWS_ACCESS_KEY && -n $AWS_SECRET_ACCESS_KEY  ]]'
@@ -29,23 +27,23 @@
         mode: 0600
       when: ec2_key|changed
 
-    - name: launch ansible cloudformation example
+    - name: launch ansible cloudformation {{StackName}}
       cloudformation:
         stack_name: "{{StackName}}" 
         state: "present"
         region: "us-east-1" 
         disable_rollback: true
-        template: "cloudformation/openshift.json"
+        template: "../cloudformation/openshift.json"
         template_parameters:
           KeyName: "{{KeyName}}"
-          DNSDomain: "{{DNSDomain}}"
+          DNSDomain: "{{publicdomain}}"
         tags:
-          Stack: "ansible-cloudformation"
+          Stack: "{{StackName}}"
       register: cloudformation_results
 
     - name: show variable
       debug: var=cloudformation_results
 
     - name: create ansible inventory file
-      template: src=templates/inventory.j2 dest=./inventory
+      template: src=../templates/inventory.j2 dest=../inventory
 

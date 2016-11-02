@@ -84,6 +84,7 @@ yum -y install ansible git
 	vi config.yml
 	```
 Here you are able to specify the following:
+
 | Name            | Default Value          | Description                                                                    |
 |-----------------|------------------------|--------------------------------------------------------------------------------|
 | publicdomain    | example.li9.com        | Public DNS domain                                                              |
@@ -144,4 +145,77 @@ Since inventory file is available ansible should be able to reach all nodes (1xM
 	```
 	ansible-playbook -e 'redhat_user=artemi.kropachev@li9.com redhat_password=MyPassword' playbooks/step_2_pre_configure_systems.yml
 	```
+## Tasks outputs
+ As part of preparation activities all nodes will be configured to host OpenShift services:
+ - docker is up and running
+ - docker storage is configured
+ - all required packages are installed
+ - hostsname are configured
 
+# Usage - install OpenShift Enterprise
+It is assumed that standard atomic-openshift-installer will be used
+Steps:
+ - connect to the master node
+   ```
+   ssh -i ~/openshift_aws.pem ec2-user@<MasterPublicIP>
+   ```
+ - run interactive installed
+   ```
+   atomic-openshift-installer install 
+   ```
+Are you ready to continue? [y/N]: **y**
+User for ssh access [root]:**<ENTERR>**
+(1) OpenShift Container Platform
+(2) Registry
+
+Choose a variant from above:  [1]: **<ENTER>**
+
+Enter hostname or IP address: **10.0.0.11**
+Will this host be an OpenShift master? [y/N]: **y**
+Will this host be RPM or Container based (rpm/container)? [rpm]: **<ENTER>**
+Do you want to add additional hosts? [y/N]: **y**
+Enter hostname or IP address: **10.0.0.12**
+Will this host be an OpenShift master? [y/N]: **n**
+Will this host be RPM or Container based (rpm/container)? [rpm]: **<ENTER>**
+
+Do you want to add additional hosts? [y/N]: **y**
+Enter hostname or IP address: **10.0.0.13**
+Will this host be an OpenShift master? [y/N]: **n**
+Will this host be RPM or Container based (rpm/container)? [rpm]: **<ENTER>**
+
+
+*** Installation Summary ***
+
+Hosts:
+- 10.0.0.11
+  - OpenShift master
+  - OpenShift node (Unscheduled)
+  - Etcd (Embedded)
+- 10.0.0.12
+  - OpenShift node (Dedicated)
+- 10.0.0.13
+  - OpenShift node (Dedicated)
+
+Total OpenShift masters: 1
+Total OpenShift nodes: 3
+
+NOTE: Add a total of 3 or more masters to perform an HA installation.
+
+Do you want to add additional hosts? [y/N]: **n**
+
+Setting up high-availability masters requires a storage host. Please provide a
+host that will be configured as a Registry Storage.
+
+Note: Containerized storage hosts are not currently supported.
+
+Enter hostname or IP address [10.0.0.11]: **<ENTER>**
+
+You might want to override the default subdomain used for exposed routes. If you don't know what this is, use the default value.
+
+New default subdomain (ENTER for none) []: **<ENTER>**
+
+
+ - Configure authentication
+```
+ansible-playbook playbooks/step_4_configure_authentication.yml 
+```

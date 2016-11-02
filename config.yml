@@ -1,0 +1,9 @@
+---
+publicdomain: example.li9.com
+localdomain: example.li9.local
+KeyName: openshift_aws
+StackName: ansibleopenshift
+root_public_key: ~/openshift_public.key
+docker_disk: /dev/xvdh
+
+
