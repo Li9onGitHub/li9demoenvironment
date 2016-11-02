@@ -1,0 +1,11 @@
+---
+- hosts: master
+  become: true
+  gather_facts: false
+  tasks:
+   - name: enable Allow All authentication
+     replace: dest=/etc/origin/master/master-config.yaml regexp='(.+)DenyAllPasswordIdentityProvider$' replace='\1AllowAllPasswordIdentityProvider' backup=yes
+    
+  handlers:
+   - name: restart openshift master
+     service: name=atomic-openshift-master state=restarted
