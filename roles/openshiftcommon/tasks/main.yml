@@ -56,12 +56,12 @@
 #- name: create admin user
 #  user: name=admin shell=/bin/bash createhome=yes comment="Admin User" password={{admin_user_password}}
 
-- name: disable NetworkManager
-  service: name=NetworkManager enabled=no state=stopped
-  ignore_errors: true
+#- name: disable NetworkManager
+#  service: name=NetworkManager enabled=no state=stopped
+#  ignore_errors: true
 
-- name: remove NetworkManager package
-  yum: name=NetworkManager state=absent
+#- name: remove NetworkManager package
+#  yum: name=NetworkManager state=absent
 
 - name: enable network service
   service: name=network enabled=yes
