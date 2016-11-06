@@ -1,15 +1,24 @@
 ---
 - name: set fixed hostname
   hostname: name={{hostname}}
+  when: internaldns
 
 - name: configure local /etc/hosts
   template: src=templates/hosts dest=/etc/hosts
+  when: internaldns
 
 - name: configure /etc/resolv.comf
   copy: dest=/etc/resolv.conf content="search {{localdomain}} {{publicdomain}}\nnameserver 10.0.0.11\nnameserver 8.8.8.8"
+  when: internaldns
 
-- name: disable peer dns
-  copy: src=files/ifcfg-eth0 dest=/etc/sysconfig/network-scripts/ifcfg-eth0
+#- name: disable peer dns
+#  copy: src=files/ifcfg-eth0 dest=/etc/sysconfig/network-scripts/ifcfg-eth0
+#  when: internaldns
+
+- name: confige static IP address
+  template: src=templates/ifcfg-eth0.j2 dest=/etc/sysconfig/network-scripts/ifcfg-eth0
+  when: internaldns
+
 
 - name: register host on redhat
   redhat_subscription: state=present username={{redhat_user}} password={{redhat_password}} autosubscribe=true

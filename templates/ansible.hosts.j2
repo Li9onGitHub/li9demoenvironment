@@ -1,0 +1,17 @@
+[OSEv3:children]
+masters
+nodes
+
+[OSEv3:vars]
+ansible_ssh_user=root
+deployment_type=openshift-enterprise
+openshift_master_default_subdomain={{publicdomain}}
+
+[masters]
+master01.{{localdomain}} openshift_hostname=master01.{{localdomain}}
+
+[nodes]
+master01.{{localdomain}}  openshift_node_labels="{'region': 'infra',   'zone': 'default'}" openshift_hostname=master01.{{localdomain}}
+# openshift_schedulable=false
+node01.{{localdomain}}    openshift_node_labels="{'region': 'primary', 'zone': 'east'}" openshift_hostname=node01.{{localdomain}}
+node02.{{localdomain}}    openshift_node_labels="{'region': 'primary', 'zone': 'west'}" openshift_hostname=node02.{{localdomain}}
