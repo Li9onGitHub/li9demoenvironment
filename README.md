@@ -17,8 +17,10 @@ yum -y install ansible git
 # Directory structure
 - ansible.cfg
 	Local Ansible configiration file
+- config.yml
+	Main configuration file for installation process
 - inventory
-	Ansible inventory file. Doesn't exist by default (will be created automatically)
+	Ansible inventory file. It doesn't exist by default (will be created automatically)
 - roles
 	Directory which contains required ansible roles
 - playbooks
@@ -29,9 +31,12 @@ yum -y install ansible git
 ├── ansible.cfg
 ├── cloudformation
 │   └── openshift.json
+├── config.yml
+├── inventory  (it doesn't exist by default)
 ├── playbooks
 │   ├── step_1_cloudformation.yml
-│   └── step_2_pre_configure_systems.yml
+│   ├── step_2_pre_configure_systems.yml
+│   └── step_3_openshift_install.yml
 ├── README.md
 ├── roles
 │   ├── dnsserver
@@ -49,17 +54,20 @@ yum -y install ansible git
 │   └── openshiftcommon
 │       ├── defaults
 │       │   └── main.yml
-│       ├── files
-│       │   └── ifcfg-eth0
 │       ├── tasks
 │       │   └── main.yml
 │       └── templates
 │           ├── hosts
+│           ├── ifcfg-eth0.j2
 │           ├── sysconfig.docker
 │           ├── sysconfig.docker-storage
 │           └── sysconfig.docker-storage-setup
 └── templates
-    └── inventory.j2
+    ├── ansible.hosts.j2
+    ├── inventory.j2
+    ├── iptables.j2
+    └── oauth.config.block
+
 ```
 
 # Usage - create instances
@@ -88,7 +96,7 @@ Here you are able to specify the following:
 | Name            | Default Value          | Description                                                                    |
 |-----------------|------------------------|--------------------------------------------------------------------------------|
 | publicdomain    | example.li9.com        | Public DNS domain                                                              |
-| localdomain     | example.li9.local      | Local DNS domain. Will be applied to create local hosts file and set hostnames |
+| localdomain     | example.li9.local      | Local DNS domain                                                               |
 | KeyName         | openshift_aws          | Key Pari name (for AWS EC2)                                                    |
 | StackName       | ansibleopenshift       | StackName for CloudFormation                                                   |
 | root_public_key | ~/openshift_public.key |                                                                                |
@@ -151,85 +159,29 @@ Since inventory file is available ansible should be able to reach all nodes (1xM
  - docker storage is configured
  - all required packages are installed
  - hostsname are configured
+ - local DNS server is up and running
 
-# Usage - install OpenShift Enterprise
-It is assumed that standard atomic-openshift-installer will be used
-Steps:
-- connect to the master node
-   ```
-   ssh -i ~/openshift_aws.pem ec2-user@<MasterPublicIP>
-   ```
-- run interactive installed
-   ```
-   atomic-openshift-installer install 
-   ```
+# OpenShit installation
 
-Are you ready to continue? [y/N]: **y**
-User for ssh access [root]:**<ENTERR>**
-(1) OpenShift Container Platform
-(2) Registry
-
-Choose a variant from above:  [1]: **<ENTER>**
-
-Enter hostname or IP address: **10.0.0.11**
-
-Will this host be an OpenShift master? [y/N]: **y**
-
-Will this host be RPM or Container based (rpm/container)? [rpm]: **<ENTER>**
-
-Do you want to add additional hosts? [y/N]: **y**
-
-Enter hostname or IP address: **10.0.0.12**
-
-Will this host be an OpenShift master? [y/N]: **n**
-
-Will this host be RPM or Container based (rpm/container)? [rpm]: **<ENTER>**
-
-Do you want to add additional hosts? [y/N]: **y**
-
-Enter hostname or IP address: **10.0.0.13**
-
-Will this host be an OpenShift master? [y/N]: **n**
-
-Will this host be RPM or Container based (rpm/container)? [rpm]: **<ENTER>**
-
-
-*** Installation Summary ***
-
-Hosts:
-- 10.0.0.11
-  - OpenShift master
-  - OpenShift node (Unscheduled)
-  - Etcd (Embedded)
-- 10.0.0.12
-  - OpenShift node (Dedicated)
-- 10.0.0.13
-  - OpenShift node (Dedicated)
-
-Total OpenShift masters: 1
-Total OpenShift nodes: 3
-
-NOTE: Add a total of 3 or more masters to perform an HA installation.
-
-Do you want to add additional hosts? [y/N]: **n**
-
-Setting up high-availability masters requires a storage host. Please provide a
-
-host that will be configured as a Registry Storage.
-
-Note: Containerized storage hosts are not currently supported.
-
-Enter hostname or IP address [10.0.0.11]: **<ENTER>**
-
-You might want to override the default subdomain used for exposed routes. If you don't know what this is, use the default value.
-
-New default subdomain (ENTER for none) []: **<ENTER>**
-
-
-- Configure authentication
+This project automates all installation procedures. To run the installation process it is enough to run the following:
 ```
-ansible-playbook playbooks/step_4_configure_authentication.yml 
+ansible-playbook playbooks/step_3_openshift_install.yml
 ```
+It will last ~ 30 mins
+Once it is finished it will be possible to use openshift.
+As a part of installation process ansible configures AllowAll Authentication provider. This means that OpenShift will allow all users at the first login.
 
+## Verify installation
+
+ - Connect to the master node
+ - Check that all nodes exist and registry and router conteiners are up and running (please be aw
+	```
+	oc get nodes
+	oc get pods
+	systemctl status atomic-openshift-master
+        systemctl status atomic-openshift-node
+	```
+ - Access the OpenShift service using  https://PublicIP:8443
+ - Use Any username and any password (since AllowAll provider was configured as a part of installation)
 
 
