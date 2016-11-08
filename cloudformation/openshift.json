@@ -557,7 +557,7 @@
     "OpenShiftMaster": {
       "Type": "AWS::EC2::Instance",
       "Properties": {
-        "InstanceType": "m4.xlarge",
+        "InstanceType": "m4.large",
         "Tags": [
           {
             "Key": "Name",
@@ -602,7 +602,7 @@
     "OpenShiftNode01": {
       "Type": "AWS::EC2::Instance",
       "Properties": {
-        "InstanceType": "m4.xlarge",
+        "InstanceType": "m4.large",
         "Tags": [
           {
             "Key": "Name",
@@ -647,7 +647,7 @@
     "OpenShiftNode02": {
       "Type": "AWS::EC2::Instance",
       "Properties": {
-        "InstanceType": "m4.xlarge",
+        "InstanceType": "m4.large",
         "Tags": [
           {
             "Key": "Name",
