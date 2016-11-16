@@ -1,8 +1,10 @@
 ---
-publicdomain: demo.li9.com
-localdomain: demo.li9.local
-KeyName: openshift_aws
-StackName: ansibleopenshift
-root_public_key: ~/openshift_public.key
-docker_disk: /dev/xvdh
-internaldns: true
+GUID:                   tss
+publicdomain:           "{{GUID}}.demo.li9.com"
+localdomain:            "{{GUID}}.li9.local"
+KeyName:                "idrsa-{{GUID}}"
+StackName:              "UserOpenShift-{{GUID}}"
+root_public_key:        ~/openshift_public_{{GUID}}.key
+docker_disk:            /dev/xvdh
+internaldns:            true
+save_inventory_file_locally: false

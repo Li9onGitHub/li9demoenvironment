@@ -1,5 +1,5 @@
 [master]
-{{cloudformation_results.stack_outputs.Master}}  hostname=master01.{{localdomain}} openshift_schedulable=true
+{{cloudformation_results.stack_outputs.Master}}  hostname=master01.{{localdomain}}
 
 [node01]
 {{cloudformation_results.stack_outputs.Node01}}  hostname=node01.{{localdomain}}
@@ -14,9 +14,6 @@ node02
 [openshift:children]
 nodes
 master
-
-[OSEv3:vars]
-openshift_master_default_subdomain={{publicdomain}}
 
 [openshift:vars]
 ansible_user=ec2-user

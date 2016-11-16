@@ -1,33 +1,30 @@
 ---
 - name: set fixed hostname
-  hostname: name={{hostname}}
-  when: internaldns
+  hostname: name={{inventory_hostname}}
 
 - name: configure local /etc/hosts
   template: src=templates/hosts dest=/etc/hosts
-  when: internaldns
 
-- name: configure /etc/resolv.comf
-  copy: dest=/etc/resolv.conf content="search {{localdomain}} {{publicdomain}}\nnameserver 10.0.0.11\nnameserver 8.8.8.8"
-  when: internaldns
+#- name: configure /etc/resolv.comf
+#  copy: dest=/etc/resolv.conf content="search {{localdomain}} {{publicdomain}}\nnameserver 10.0.0.11\nnameserver 8.8.8.8"
+#  when: internaldns
 
 - name: configure static IP address
   template: src=templates/ifcfg-eth0.j2 dest=/etc/sysconfig/network-scripts/ifcfg-eth0
-  when: internaldns
 
 - name: register host on redhat
   redhat_subscription: state=present username={{redhat_user}} password={{redhat_password}} autosubscribe=true
   register: redhat_subscription
 
-- name: get pool ID
-  shell: subscription-manager list --available --all|grep "Pool ID:"|awk '{print $3}'
-  register: pool_id
+#- name: get pool ID
+#  shell: subscription-manager list --available --all|grep "Pool ID:"|awk '{print $3}'
+#  register: pool_id
 
-- debug: var=pool_id
+#- debug: var=pool_id
 
-- name: attach system to subscription
-  shell: subscription-manager attach --pool {{pool_id.stdout}}
-  ignore_errors: true
+#- name: attach system to subscription
+#  shell: subscription-manager attach --pool {{pool_id.stdout}}
+#  ignore_errors: true
 
 - name: disable all repos
   command: subscription-manager repos --disable="*"

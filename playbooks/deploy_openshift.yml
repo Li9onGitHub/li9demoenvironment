@@ -1,2 +1,17 @@
 ---
+- include: step_1_cloudformation.yml
+
+
+
+- hosts: all
+  gather_facts: false
+  become: false
+  tasks:
+   - name: wait until all hosts are up and running
+     wait_for: port=22 search_regex=OpenSSH delay=1 timeout=300
+     delegate_to: localhost
+
+
+- include: step_1.5_register_on_redhat.yml
+  
 
