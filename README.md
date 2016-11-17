@@ -87,10 +87,12 @@ yum -y install ansible git
 	ansible-playbook -e 'domaintag=<DOMAINTAG> redhat_user=<REDHATUSER>  redhat_password=<REDHATPASSWORD> aws_access_key=<AWS_ACCESS_KEY> aws_secret_key=<AWS_SECRET_KEY>' playbooks/step_1_cloudformation.yml
 	```
 	NOTE! The following parameters are mandatory and must be specified:
+
 		- redhat_username (Red Hat user who has OpenShift subscription)
 		- redhat_password (Red Hat password)
 		- aws_access_key (AWS ACCESS KEY)
 		- aws_secret_key (AWS SECRET ACCESS KEY)
+
 	NOTE! domaintag is 3 letters uniqie ID for newly created domain (this means that <domaintag>.demo.li9.com zone will be created)
 	Example:
 	```
@@ -134,13 +136,15 @@ These automation templates deploys OpenShift with all required AWS infrastrucure
 # Installation verification
 
  - Connect to the master node
- - Check that all nodes exist and registry and router conteiners are up and running (please be aw
+ - Check that all nodes exist and registry and router conteiners are up and running
+
 	```
 	oc get nodes
 	oc get pods
 	systemctl status atomic-openshift-master
         systemctl status atomic-openshift-node
 	```
+
  - Access the OpenShift service using  https://PublicIP:8443
  - Use Any username and any password (since AllowAll provider was configured as a part of installation)
 
