@@ -6,5 +6,4 @@ KeyName:                "idrsa-{{domaintag}}"
 StackName:              "UserOpenShift-{{domaintag}}"
 root_public_key:        openshift_public_{{domaintag}}.key
 docker_disk:            /dev/xvdh
-internaldns:            true
 save_inventory_file_locally: false

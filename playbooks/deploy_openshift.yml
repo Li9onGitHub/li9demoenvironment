@@ -1,5 +1,6 @@
 ---
 - include: step_1_cloudformation.yml
+  tags: cf
 
 
 - hosts: all
@@ -12,28 +13,16 @@
 
 
 - include: step_2_register_on_redhat.yml
+  tags: redhat
 
 
-#- hosts: master
-#  become: true
-#  vars_files:
-#    - ../config.yml
-#  roles:
-#   - dnsserver
-#
+- include: step_3_apply_openshiftcommon_role.yml
+  tags: oscommon
 
+- include: step_4_pre_configure_systems.yml
+  tags: preconf
 
-- hosts: all
-  become: true
-  vars_files:
-    - ../config.yml
-  roles:
-   - openshiftcommon
-
-
-- include: step_3_pre_configure_systems.yml
-
-
-- include: step_4_openshift_install.yml
+- include: step_5_openshift_install.yml
+  tags: install
 
 

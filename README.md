@@ -2,7 +2,7 @@
 Li9 Customer Demo Environment
 
 
-This project automates initial configuration of OpenShift 3.x nodes (masters and nodes).
+This project automates initial configuration of OpenShift 3.x nodes (masters and nodes) at AWS environment
 # Prerequisites (Automation host)
 - Linux
 - Ansible
@@ -19,38 +19,29 @@ yum -y install ansible git
 	Local Ansible configiration file
 - config.yml
 	Main configuration file for installation process
-- inventory
-	Ansible inventory file. It doesn't exist by default (will be created automatically)
 - roles
 	Directory which contains required ansible roles
 - playbooks
 	Directory which contains ansible playbooks used for automation purposes
 - templates
 	File templates used by ansible template module
+- cloudformation
+	This directory contains cloudformation templates
 ```
+.
 ├── ansible.cfg
 ├── cloudformation
 │   └── openshift.json
 ├── config.yml
-├── inventory  (it doesn't exist by default)
 ├── playbooks
+│   ├── deploy_openshift.yml
 │   ├── step_1_cloudformation.yml
-│   ├── step_2_pre_configure_systems.yml
-│   └── step_3_openshift_install.yml
+│   ├── step_2_register_on_redhat.yml
+│   ├── step_3_apply_openshiftcommon_role.yml
+│   ├── step_4_pre_configure_systems.yml
+│   └── step_5_openshift_install.yml
 ├── README.md
 ├── roles
-│   ├── dnsserver
-│   │   ├── defaults
-│   │   │   └── main.yml
-│   │   ├── handlers
-│   │   │   └── main.yml
-│   │   ├── tasks
-│   │   │   └── main.yml
-│   │   └── templates
-│   │       ├── 0.0.10.in-addr.arpa
-│   │       ├── local.zone
-│   │       ├── named.conf
-│   │       └── public.zone
 │   └── openshiftcommon
 │       ├── defaults
 │       │   └── main.yml
@@ -64,13 +55,12 @@ yum -y install ansible git
 │           └── sysconfig.docker-storage-setup
 └── templates
     ├── ansible.hosts.j2
-    ├── inventory.j2
     ├── iptables.j2
     └── oauth.config.block
 
 ```
 
-# Usage - create instances
+# Usage
 1. **Pull source code**
 
 	```
@@ -78,100 +68,70 @@ yum -y install ansible git
 	git clone  https://github.com/Li9onGitHub/li9demoenvironment.git
 	cd li9demoenvironment
 	```
-2. **Configure AWS access**
+
+2. **Get AWS credentials**
 
 	Automation requires access to AWS using ACCESS and SECRET_ACCESS keys. This parametres can be found on AWS portal.
-	You should configure shell variables before using automation.
-	```
-	export AWS_ACCESS_KEY='...'
-	export AWS_SECRET_ACCESS_KEY='+...'
-	```
 
 3. **Configure installation parameters**
+
+	All installation parameters are stored in config.yml but usually there are no needs to change them.
 	```
 	vi config.yml
 	```
-Here you are able to specify the following:
 
-| Name            | Default Value          | Description                                                                    |
-|-----------------|------------------------|--------------------------------------------------------------------------------|
-| publicdomain    | example.li9.com        | Public DNS domain                                                              |
-| localdomain     | example.li9.local      | Local DNS domain                                                               |
-| KeyName         | openshift_aws          | Key Pari name (for AWS EC2)                                                    |
-| StackName       | ansibleopenshift       | StackName for CloudFormation                                                   |
-| root_public_key | ~/openshift_public.key |                                                                                |
-| docker_disk     | /dev/xvdh              | Path to block device                                                           |
-
-
-4. **Deploy AWS OpenShift Infrastructure**
+4. **Deploy AWS OpenShift**
 	
-	To deploy required instances in AWS run step_1_cloudformation.yaml  playbook
+	To deploy required instances in AWS run  openshift_install.yml playbook as shown below
 	```
-	ansible-playbook playbooks/step_1_cloudformation.yml
+	ansible-playbook -e 'domaintag=<DOMAINTAG> redhat_user=<REDHATUSER>  redhat_password=<REDHATPASSWORD> aws_access_key=<AWS_ACCESS_KEY> aws_secret_key=<AWS_SECRET_KEY>' playbooks/step_1_cloudformation.yml
 	```
-Note! it is possible to define StackName as an ansible variable (ansibleopenshift will be used by default if it is not specified)
-	```
-	ansible-playbook -e "StackName=MyOpenShift" playbooks/step_1_cloudformation.yml
-	```
-
-## tasks outputs
-step_1_cloudformation.yml playbook does the following:
-- creates keypair openshift_aws at AWS EC2
-	This keypair will be used for all instances
-- downloads private key as ~/openshift_aws.pem
-- applies cloudformation template cloudformation/openshift.json
-
-Once it is finshed the following resources should be available:
-- VPC (10.0.0.0/16)
-- Subnet (10.0.0.0/24)
-- EC2 instances:
-	- OpenShiftMaster
-	- OpenShiftNode01
-	- OpenShiftNode02
-- EC2 Volumes (9G additional storage(as /dev/xvdh) for each instance)
-- Several Security Groups
-- openshift_aws.pem which is available in user home directory
-- "inventory" file located in root project directory
-
-## verify
-Since inventory file is available ansible should be able to reach all nodes (1xMaster, 2xNodes)
-	```
-	ansible -m ping all
-	``` 
-
-# Usage - configure instances
-1. **Get Red Hat OpenShift subscription**
- Automation uses Red Hat subscription to install OpenShift packages. As part for the subscription the following information must be available:
- - username
- - password
-
-2. **Run pre configuration playbook**
-	```
-	ansible-playbook -e 'redhat_user=<REDHATUSER>  redhat_password=<REDHATPASSWORD>' playbooks/step_2_pre_configure_systems.yml		 
-	```
+	NOTE! The following parameters are mandatory and must be specified:
+		- redhat_username (Red Hat user who has OpenShift subscription)
+		- redhat_password (Red Hat password)
+		- aws_access_key (AWS ACCESS KEY)
+		- aws_secret_key (AWS SECRET ACCESS KEY)
+	NOTE! domaintag is 3 letters uniqie ID for newly created domain (this means that <domaintag>.demo.li9.com zone will be created)
 	Example:
 	```
-	ansible-playbook -e 'redhat_user=artemi.kropachev@li9.com redhat_password=MyPassword' playbooks/step_2_pre_configure_systems.yml
+	ansible-playbook -e 'domaintag=yfs redhat_user=someuser@somedomain.com redhat_password=StrongPwd123 aws_access_key=PPAJ2CVAKPCXFOUTHHA aws_secret_key=+QCXt3nHQbR9QUioGg1taLOIGy46V9CtbaRsjimM' playbooks/step_1_cloudformation.yml	
 	```
-## Tasks outputs
- As part of preparation activities all nodes will be configured to host OpenShift services:
- - docker is up and running
- - docker storage is configured
- - all required packages are installed
- - hostsname are configured
- - local DNS server is up and running
+		
 
-# OpenShit installation
-
-This project automates all installation procedures. To run the installation process it is enough to run the following:
-```
-ansible-playbook playbooks/step_3_openshift_install.yml
-```
 It will last ~ 30 mins
 Once it is finished it will be possible to use openshift.
 As a part of installation process ansible configures AllowAll Authentication provider. This means that OpenShift will allow all users at the first login.
 
-## Verify installation
+
+# Actions and outputs
+
+These automation templates deploys OpenShift with all required AWS infrastrucure items. The templates do the following (TAG is domaintag):
+
+- create AWS keypair with name idrsa-TAG
+- download private key locally as ~/idrsa-TAG.pem
+- apply cloudformation template cloudformation/openshift.json with the following outputs:
+	- VPC (10.0.0.0/16)
+	- Subnet (10.0.0.0/24)
+	- EC2 instances:
+		- OpenShiftMaster
+		- OpenShiftNode01
+		- OpenShiftNode02
+	- EC2 Volumes (as /dev/xvdh) for each instance)
+	- Several Security Groups
+	- DNS records (type "A") which points to Master PublicIP
+		- TAG.demo.li9.com 
+		- master01.TAG.demo.li9.com
+		- *.TAG.demo.li9.com
+
+- register each system on Red Hat portal (+apply proper OpenShift-related repositories)
+- do general node configuration:
+	- docker installation and configuration
+	- installation of additional software
+- configure OpenShift installer (create ansible inventory file on master node)
+- run OpenShift installer
+
+
+# Installation verification
 
  - Connect to the master node
  - Check that all nodes exist and registry and router conteiners are up and running (please be aw

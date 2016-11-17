@@ -9,9 +9,9 @@
      poll: 120
      tags: openshiftinstall
 
-   - name: enable Allow All authentication
-     replace: dest=/etc/origin/master/master-config.yaml regexp='(.+)DenyAllPasswordIdentityProvider$' replace='\1AllowAllPasswordIdentityProvider' backup=yes
-     notify: restart openshift master
+#   - name: enable Allow All authentication
+#     replace: dest=/etc/origin/master/master-config.yaml regexp='(.+)DenyAllPasswordIdentityProvider$' replace='\1AllowAllPasswordIdentityProvider' backup=yes
+#     notify: restart openshift master
 
    - name: enable node scheduler for master
      command: oadm  manage-node  --schedulable  master01.{{localdomain}}
