@@ -2,7 +2,6 @@
 - include: step_1_cloudformation.yml
 
 
-
 - hosts: all
   gather_facts: false
   become: false
@@ -12,6 +11,29 @@
      delegate_to: localhost
 
 
-- include: step_1.5_register_on_redhat.yml
-  
+- include: step_2_register_on_redhat.yml
+
+
+#- hosts: master
+#  become: true
+#  vars_files:
+#    - ../config.yml
+#  roles:
+#   - dnsserver
+#
+
+
+- hosts: all
+  become: true
+  vars_files:
+    - ../config.yml
+  roles:
+   - openshiftcommon
+
+
+- include: step_3_pre_configure_systems.yml
+
+
+- include: step_4_openshift_install.yml
+
 

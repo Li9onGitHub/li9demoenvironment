@@ -26,11 +26,11 @@
 #  shell: subscription-manager attach --pool {{pool_id.stdout}}
 #  ignore_errors: true
 
-- name: disable all repos
-  command: subscription-manager repos --disable="*"
+#- name: disable all repos
+#  command: subscription-manager repos --disable="*"
 
-- name: enable required repos
-  command: subscription-manager repos --enable="rhel-7-server-rpms" --enable="rhel-7-server-extras-rpms"  --enable="rhel-7-server-ose-3.3-rpms"
+#- name: enable required repos
+#  command: subscription-manager repos --enable="rhel-7-server-rpms" --enable="rhel-7-server-extras-rpms"  --enable="rhel-7-server-ose-3.3-rpms"
 
 - name: install additional packages
   yum: name={{item}} state=installed
