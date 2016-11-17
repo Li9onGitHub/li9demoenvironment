@@ -3,24 +3,6 @@
   become: true
   vars_files:
     - ../config.yml
-  roles:
-   - dnsserver
-
-
-
-- hosts: all
-  become: true
-  vars_files:
-    - ../config.yml
-  roles:
-   - openshiftcommon
-
-
-
-- hosts: master
-  become: true
-  vars_files:
-    - ../config.yml
   tasks:
    - name: configuring ansible hosts installation file
      template: src=../templates/ansible.hosts.j2 dest=/etc/ansible/hosts
@@ -40,16 +22,18 @@
    - name: save ssh public key localy
      copy:
       content: "{{ key_results.ssh_public_key }}\n"
-      dest: "{{root_public_key}}"
+      dest: "~/{{root_public_key}}"
       mode: 0600
      become: no
      delegate_to: 127.0.0.1
 
 - hosts: all
   become: true
+  vars_files:
+    - ../config.yml
   tasks:
    - name: copy root public key to all hosts
-     copy: src=~/openshift_public.key dest=/root/.ssh/
+     copy: src="~/{{root_public_key}}" dest=/root/.ssh/
 
    - name: adding root public key to authorized_keys
-     shell: cat /root/.ssh/openshift_public.key >>/root/.ssh/authorized_keys
+     shell: cat /root/.ssh/{{root_public_key}} >>/root/.ssh/authorized_keys

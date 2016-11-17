@@ -1,0 +1,36 @@
+---
+- hosts: all
+  become: true
+  vars_files:
+    - ../config.yml
+  tasks:
+
+   - name: set fixed hostname
+     hostname: name={{inventory_hostname}}
+
+   - name: register host on redhat
+     redhat_subscription: state=present username={{redhat_user}} password={{redhat_password}} autosubscribe=true
+     register: redhat_subscription
+     retries: 3
+     delay: 5
+
+   - debug: var=redhat_subscription
+
+   - name: get pool ID
+     shell: subscription-manager list --available --all|grep "Pool ID:"|awk '{print $3}'
+     register: pool_id
+     changed_when: false
+
+   - debug: var=pool_id
+
+   - name: attach system to subscription
+     shell: subscription-manager attach --pool {{pool_id.stdout}}
+     ignore_errors: true
+     when: pool_id.stdout != ""
+
+   - name: disable all repos
+     command: subscription-manager repos --disable="*"
+
+   - name: enable required repos
+     command: subscription-manager repos --enable="rhel-7-server-rpms" --enable="rhel-7-server-extras-rpms"  --enable="rhel-7-server-ose-3.3-rpms"
+

@@ -1,2 +1,28 @@
 ---
+- include: step_1_cloudformation.yml
+  tags: cf
+
+
+- hosts: all
+  gather_facts: false
+  become: false
+  tasks:
+   - name: wait until all hosts are up and running
+     wait_for: port=22 search_regex=OpenSSH delay=1 timeout=300
+     delegate_to: localhost
+
+
+- include: step_2_register_on_redhat.yml
+  tags: redhat
+
+
+- include: step_3_apply_openshiftcommon_role.yml
+  tags: oscommon
+
+- include: step_4_pre_configure_systems.yml
+  tags: preconf
+
+- include: step_5_openshift_install.yml
+  tags: install
+
 

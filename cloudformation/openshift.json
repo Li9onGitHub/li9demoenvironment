@@ -6,14 +6,16 @@
       "Type": "AWS::EC2::KeyPair::KeyName",
       "ConstraintDescription": "Must be the name of an existing EC2 KeyPair"
     },
-    "DNSDomain": {
-      "Description": "DNS Domain",
+    "domaintag": {
+      "Description": "Unique domain tag",
       "Type": "String",
-      "MinLength": "5",
-      "MaxLength": "200",
-      "Default": "demo.li9.com",
-      "ConstraintDescription": "Must be a valid dns zone"
+      "MinLength": "3",
+      "MaxLength": "3",
+      "Default": "abc",
+      "AllowedPattern" : "[a-z][a-z][a-z]",
+      "ConstraintDescription": "[a-z][a-z][a-z]"
     }
+
 
   },
 
@@ -561,7 +563,7 @@
         "Tags": [
           {
             "Key": "Name",
-            "Value": { "Fn::Join": [ "", [ "master01.", { "Ref": "DNSDomain" }  ]] }
+            "Value": { "Fn::Join": [ ".", [ "master01", { "Ref": "domaintag" }, "li9.local"  ]] }
           }
         ],
         "NetworkInterfaces": [
@@ -606,7 +608,7 @@
         "Tags": [
           {
             "Key": "Name",
-	    "Value": { "Fn::Join": [ "", [ "node01.", { "Ref": "DNSDomain" }  ]] }
+	    "Value": { "Fn::Join": [ ".", [ "node01", { "Ref": "domaintag" }, "li9.local"  ]] }
           }
         ],
         "NetworkInterfaces": [
@@ -651,7 +653,7 @@
         "Tags": [
           {
             "Key": "Name",
-	    "Value": { "Fn::Join": [ "", [ "node02.", { "Ref": "DNSDomain" }  ]] }
+	    "Value": { "Fn::Join": [ ".", [ "node02", { "Ref": "domaintag" }, "li9.local"  ]] }
           }
         ],
         "NetworkInterfaces": [
@@ -685,8 +687,45 @@
         ]      
 
       }
-    }
+    },
 
+
+    "DNSZone" : {
+    	"Type" : "AWS::Route53::RecordSet",
+    	"Properties" : {
+      		"HostedZoneId" :  "ZG1LSIRFXEMSJ",
+      		"Comment" : "DNS name for my temporary zone.",  
+      		"Name" :  { "Fn::Join": [ ".", [ { "Ref": "domaintag" }, "demo.li9.com"  ]] },
+      		"Type" : "A",
+      		"TTL" : "900",
+		"ResourceRecords" : [ { "Fn::GetAtt" : [ "OpenShiftMaster", "PublicIp" ] } ]
+    	}
+    },
+
+    "DNSAny" : {
+   	"Type" : "AWS::Route53::RecordSet",
+    	"Properties" : {
+      		"HostedZoneId" :  "ZG1LSIRFXEMSJ",
+      		"Comment" : "DNS name for my instance.",
+		"Name" :  { "Fn::Join": [ ".", [ "*", { "Ref": "domaintag" }, "demo.li9.com"  ]] },
+      		"Type" : "A",
+      		"TTL" : "900",
+		"ResourceRecords" : [ { "Fn::GetAtt" : [ "OpenShiftMaster", "PublicIp" ] } ]
+
+    	}
+    },
+
+    "DNSMaster" : {
+        "Type" : "AWS::Route53::RecordSet",
+        "Properties" : {
+                "HostedZoneId" :  "ZG1LSIRFXEMSJ",
+                "Comment" : "DNS name for my instance.",
+		"Name" :  { "Fn::Join": [ ".", [ "master01", { "Ref": "domaintag" }, "demo.li9.com"  ]] },
+                "Type" : "A",
+                "TTL" : "900",
+		"ResourceRecords" : [ { "Fn::GetAtt" : [ "OpenShiftMaster", "PublicIp" ] } ]
+        }
+    }
 
 
 
