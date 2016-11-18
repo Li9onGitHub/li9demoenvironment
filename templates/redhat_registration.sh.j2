@@ -1,0 +1,42 @@
+#!/bin/bash
+
+# Trying to unregister
+
+fail_with_err() {
+#    unlink $0
+    exit 1
+}
+
+subscription-manager unsubscribe --all
+subscription-manager clean
+
+subscription-manager register --auto-attach --force --username '{{ redhat_user }}' --password '{{ redhat_password }}'
+
+if [ $? -ne 0 ]; then
+    echo "Registration failed!"
+    fail_with_err
+fi
+
+subscription-manager refresh
+
+if [ $? -ne 0 ]; then
+    echo "Not refreshed!"
+    fail_with_err
+fi
+
+subscription-manager repos --disable="*"
+
+if [ $? -ne 0 ]; then
+    echo "Disabling of all repositories failed!"
+    fail_with_err
+fi
+
+subscription-manager repos --enable="rhel-7-server-rpms" --enable="rhel-7-server-extras-rpms"     --enable="rhel-7-server-ose-3.3-rpms"
+
+if [ $? -ne 0 ]; then
+    echo "Enabling of only required repositories failed!"
+    fail_with_err
+fi
+
+exit 0
+
