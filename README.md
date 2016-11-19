@@ -100,9 +100,7 @@ yum -y install ansible git
 	```
 		
 
-It will last ~ 30 mins
-Once it is finished it will be possible to use openshift.
-As a part of installation process ansible configures AllowAll Authentication provider. This means that OpenShift will allow all users at the first login.
+It will need ~ 25 mins to be completed.  Once it is finished it will be possible to use openshift.  As a part of installation process ansible configures AllowAll Authentication provider. This means that OpenShift will allow all users at the first login.
 
 
 # Actions and outputs
@@ -145,7 +143,6 @@ These automation templates deploys OpenShift with all required AWS infrastrucure
         systemctl status atomic-openshift-node
 	```
 
- - Access the OpenShift service using  https://PublicIP:8443
+ - Access the OpenShift service using  https://PublicIP:8443 or https://TAG.demo.li9.com
  - Use Any username and any password (since AllowAll provider was configured as a part of installation)
-
 

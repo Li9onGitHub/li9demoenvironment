@@ -1,6 +1,7 @@
 ---
 - hosts: all
   become: true
+  gather_facts: false
   vars_files:
     - ../config.yml
   tasks:
@@ -9,10 +10,11 @@
      hostname: name={{inventory_hostname}}
 
    - name: register host on redhat
-     redhat_subscription: state=present username={{redhat_user}} password={{redhat_password}} autosubscribe=true
+     command: subscription-manager register --username='{{redhat_user}}' --password='{{redhat_password}}' --auto-attach --force
      register: redhat_subscription
-     retries: 3
-     delay: 5
+     until: (redhat_subscription.stdout.find('System already registered') != -1 or redhat_subscription.rc == 0)
+     retries: 10
+     delay: 10
 
    - debug: var=redhat_subscription
 
@@ -28,9 +30,13 @@
      ignore_errors: true
      when: pool_id.stdout != ""
 
-   - name: disable all repos
-     command: subscription-manager repos --disable="*"
+   - name: get list of enabled repos
+     shell: subscription-manager repos --list-enabled|grep "Repo ID"|awk '{print $3}'
+     changed_when: false
+     register: repos
+   
+   - debug: var=repos
 
-   - name: enable required repos
-     command: subscription-manager repos --enable="rhel-7-server-rpms" --enable="rhel-7-server-extras-rpms"  --enable="rhel-7-server-ose-3.3-rpms"
+   - name: configing required repositories
+     command: subscription-manager repos --disable="*" --enable="rhel-7-server-rpms" --enable="rhel-7-server-extras-rpms"  --enable="rhel-7-server-ose-3.3-rpms"
 
