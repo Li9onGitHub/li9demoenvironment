@@ -1,0 +1,32 @@
+- hosts: localhost
+  become: false
+  gather_facts: false
+  vars_files:
+   - ../config.yml
+  tasks:
+   - name: show SSH private Key
+     command: cat ~/{{KeyName}}.pem
+     register: keybody
+     changed_when: false
+
+   - name: send email that service has been deployed successfully
+     mail:
+      subject: "OpenShift {{publicdomain}} has been deployed"
+      to: "{{email}}"
+      from: do-not-reply@demo.li9.com
+      body: |
+       OpenShif Enterprise 3.x service has been deployed successfully.
+       The following information is important to connect to the service:
+       *) Service Access URL: https://master01.{{publicdomain}}:8443
+       *) Master node: master01.{{publicdomain}}
+       *) Nodes: node01.{{publicdomain}} and node02.{{publicdomain}}
+       *) All hosts are accessible via ssh
+       *) SSH username: ec2-user
+       *) SSH access type: only using a private key 
+       *) SSH private key is shown below:
+       {{keybody.stdout}}
+       Thank you
+       //Li9 team
+
+    
+   - fail: msg="sdsds"

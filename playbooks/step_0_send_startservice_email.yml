@@ -1,0 +1,12 @@
+- hosts: localhost
+  become: false
+  gather_facts: false
+  vars_files:
+   - ../config.yml
+  tasks:
+   - name: send email that service is ordered
+     mail:
+      subject: "OpenShift {{publicdomain}} has been ordered"
+      to: "{{email}}"
+      from: do-not-reply@demo.li9.com
+      body: "OpenShif Enterprise 3.x service has been ordered to domain {{publicdomain}}"

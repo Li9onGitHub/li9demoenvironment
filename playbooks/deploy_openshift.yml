@@ -1,16 +1,10 @@
 ---
-- hosts: localhost
-  become: false
-  gather_facts: false
-  tasks:
-   - name: display email
-     debug: msg='Your email {{email}}'
 
-   - fail: msg='Stopped for testing'
+- include: step_0_send_startservice_email.yml
+  when: email is defined
 
 - include: step_1_cloudformation.yml
   tags: cf
-
 
 - hosts: all
   gather_facts: false
@@ -23,10 +17,8 @@
       - 1
       - 1
 
-
 - include: step_2_register_on_redhat.yml
   tags: redhat
-
 
 - include: step_3_apply_openshiftcommon_role.yml
   tags: oscommon
@@ -37,4 +29,6 @@
 - include: step_5_openshift_install.yml
   tags: install
 
+- include: step_6_send_servicedeployed_email.yml
+  when: email is defined
 

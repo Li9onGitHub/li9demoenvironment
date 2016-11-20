@@ -725,7 +725,35 @@
                 "TTL" : "900",
 		"ResourceRecords" : [ { "Fn::GetAtt" : [ "OpenShiftMaster", "PublicIp" ] } ]
         }
+    },
+
+    "DNSNode01" : {
+        "Type" : "AWS::Route53::RecordSet",
+        "Properties" : {
+                "HostedZoneId" :  "ZG1LSIRFXEMSJ",
+                "Comment" : "Public DNS name for node01",
+                "Name" :  { "Fn::Join": [ ".", [ "node01", { "Ref": "domaintag" }, "demo.li9.com"  ]] },
+                "Type" : "A",
+                "TTL" : "900",
+                "ResourceRecords" : [ { "Fn::GetAtt" : [ "OpenShiftNode01", "PublicIp" ] } ]
+        }
+    },
+
+    "DNSNode02" : {
+        "Type" : "AWS::Route53::RecordSet",
+        "Properties" : {
+                "HostedZoneId" :  "ZG1LSIRFXEMSJ",
+                "Comment" : "Public DNS name for node02",
+                "Name" :  { "Fn::Join": [ ".", [ "node02", { "Ref": "domaintag" }, "demo.li9.com"  ]] },
+                "Type" : "A",
+                "TTL" : "900",
+                "ResourceRecords" : [ { "Fn::GetAtt" : [ "OpenShiftNode02", "PublicIp" ] } ]
+        }
     }
+
+
+
+
 
 
 
