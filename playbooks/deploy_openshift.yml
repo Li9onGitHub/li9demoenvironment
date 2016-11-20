@@ -1,4 +1,13 @@
 ---
+- hosts: localhost
+  become: false
+  gather_facts: false
+  tasks:
+   - name: display email
+     debug: msg='Your email {{email}}'
+
+   - fail: msg='Stopped for testing'
+
 - include: step_1_cloudformation.yml
   tags: cf
 
