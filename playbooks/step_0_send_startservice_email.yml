@@ -8,5 +8,10 @@
      mail:
       subject: "OpenShift {{publicdomain}} has been ordered"
       to: "{{email}}"
-      from: do-not-reply@demo.li9.com
-      body: "OpenShif Enterprise 3.x service has been ordered to domain {{publicdomain}}"
+      from: Li9 Demo <do-not-reply@demo.li9.com>
+      body: |
+       OpenShift Enterprise 3.x service has been ordered on domain {{publicdomain}}
+       Li9 Demo system started its deployment
+       It will take ~ 25 mins
+       Enjoy your demo environment
+       //Li9 Demo system
