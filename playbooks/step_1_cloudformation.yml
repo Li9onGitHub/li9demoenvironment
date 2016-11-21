@@ -36,6 +36,29 @@
           Stack: "{{StackName}}"
       register: cfres
 
+    - name: send an email that cloudformation is done
+      mail:
+        subject: "OpenShift is almost ready"
+        to: "{{email}}"
+        from: Li9 Demo <do-not-reply@demo.li9.com>
+        body: |
+          The first step of OpenShift configuration is commpleted - AWS Instances were deployed
+          Please be aware that system is still configuring your OpenShift Enterprise and it will take some time.
+          Once it's ready you will receive a new email
+          The following information is important to connect to the service:
+          *) Master node: master01.{{publicdomain}}
+          *) Nodes: node01.{{publicdomain}} and node02.{{publicdomain}}
+          *) All servers are running under Red Hat Enterprise Linux 7.x
+          *) All hosts are accessible via ssh
+          *) SSH username: ec2-user
+          *) SSH access type: only using a private key
+          *) SSH private key is shown below:
+          "{{ ec2_key.key.private_key }}"
+          Thank you
+          //Li9 team
+      when: email is defined
+
+
 #    - name: show variable
 #      debug: var=cfres
 
@@ -54,27 +77,4 @@
         - { name: node02,   groups: node02,nodes, ip: "{{cfres.stack_outputs.Node02}}" }
         - { name: master01, groups: master,       ip: "{{cfres.stack_outputs.Master}}" }
       changed_when: false
-      
-
-    - name: send an email that cloudformation is done
-      mail:
-        subject: "OpenShift is almost ready"
-        to: "{{email}}"
-        from: Li9 Demo <do-not-reply@demo.li9.com>
-        body: |
-          The first step of OpenShift configuration is commpleted - AWS Instances were deployed
-          Please be aware that system is still configuring your OpenShift Enterprise and it will take some time.
-          Once it's ready you will receive a new email
-          The following information is important to connect to the service:
-          *) Master node: master01.{{publicdomain}}
-          *) Nodes: node01.{{publicdomain}} and node02.{{publicdomain}}
-          *) All servers are running under Red Hat Enterprise Linux 7.x
-          *) All hosts are accessible via ssh
-          *) SSH username: ec2-user
-          *) SSH access type: only using a private key 
-          *) SSH private key is shown below:
-          "{{ ec2_key.key.private_key }}"
-          Thank you
-          //Li9 team
-      when: email is defined
 
