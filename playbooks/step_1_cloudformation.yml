@@ -4,17 +4,7 @@
   become: false
   vars_files:
     - ../config.yml
-  tasks: 
-#    - name: check that AWS_ACCESS_KEY and AWS_SECRET_ACCESS_KEY are set
-#      shell: '[[ -n  $AWS_ACCESS_KEY && -n $AWS_SECRET_ACCESS_KEY  ]]'
-#      ignore_errors: true
-#      changed_when: false
-#      register: aws_cred
-   
-#    - name: display error message if AWS_ACCESS_KEY or AWS_SECRET_ACCESS_KEY are not set
-#      fail: msg="Seems AWS_ACCESS_KEY or AWS_SECRET_ACCESS_KEY bash environment variables were not exported"
-#      when: aws_cred|failed
-
+  tasks:
     - name: create key pair {{KeyName}}
       ec2_key:
         name: "{{KeyName}}"
@@ -25,16 +15,16 @@
 
     - name: save private key
       copy:
-        content: "{{ ec2_key.key.private_key }}" 
-        dest: "~/{{KeyName}}.pem" 
+        content: "{{ ec2_key.key.private_key }}"
+        dest: "~/{{KeyName}}.pem"
         mode: 0600
       when: ec2_key|changed
 
     - name: launch ansible cloudformation {{StackName}}
       cloudformation:
-        stack_name: "{{StackName}}" 
+        stack_name: "{{StackName}}"
         state: "present"
-        region: "us-east-1" 
+        region: "us-east-1"
         disable_rollback: true
         template: "../cloudformation/openshift.json"
         aws_access_key: "{{aws_access_key}}"
@@ -52,16 +42,31 @@
 #    - name: create ansible inventory file
 #      template: src=../templates/ansible.hosts.j2 dest=~/inventory force=yes
 
-    - name: add_host for master node
-      add_host: ansible_host={{cloudformation_results.stack_outputs.Master}}  groups=master,openshift ansible_user=ec2-user ansible_ssh_private_key_file=~/{{KeyName}}.pem name=master01.{{localdomain}}
-      changed_when: false
-
     - name: add_host for node01
-      add_host: ansible_host={{cloudformation_results.stack_outputs.Node01}} groups=node01,nodes,openshift ansible_user=ec2-user ansible_ssh_private_key_file=~/{{KeyName}}.pem name=node01.{{localdomain}}
+      add_host: 
+        ansible_host={{cloudformation_results.stack_outputs.Node01}}
+        groups=node01,nodes,openshift
+        ansible_user=ec2-user
+        ansible_ssh_private_key_file=~/{{KeyName}}.pem
+        name=node01.{{localdomain}}
       changed_when: false
 
     - name: add_host for node02
-      add_host: ansible_host={{cloudformation_results.stack_outputs.Node02}} groups=node02,nodes,openshift ansible_user=ec2-user ansible_ssh_private_key_file=~/{{KeyName}}.pem name=node02.{{localdomain}}
+      add_host:
+        ansible_host={{cloudformation_results.stack_outputs.Node02}}
+        groups=node02,nodes,openshift
+        ansible_user=ec2-user
+        ansible_ssh_private_key_file=~/{{KeyName}}.pem
+        name=node02.{{localdomain}}
+      changed_when: false
+
+    - name: add_host for master node
+      add_host:
+        ansible_host={{cloudformation_results.stack_outputs.Master}}
+        groups=master,openshift
+        ansible_user=ec2-user
+        ansible_ssh_private_key_file=~/{{KeyName}}.pem
+        name=master01.{{localdomain}}
       changed_when: false
 
     - name: send an email that cloudformation is done
