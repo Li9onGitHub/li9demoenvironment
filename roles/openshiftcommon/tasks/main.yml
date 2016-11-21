@@ -8,10 +8,6 @@
 - name: configure static IP address
   template: src=templates/ifcfg-eth0.j2 dest=/etc/sysconfig/network-scripts/ifcfg-eth0
 
-- name: register host on redhat
-  redhat_subscription: state=present username={{redhat_user}} password={{redhat_password}} autosubscribe=true
-  register: redhat_subscription
-
 - name: install additional packages
   yum: name={{item}} state=installed
   with_items:
