@@ -154,7 +154,8 @@ If everything is completed successfully user will receive an email which contain
 	oc get nodes
 	oc get pods
 	systemctl status atomic-openshift-master
-        systemctl status atomic-openshift-node
+	systemctl status atomic-openshift-node
+	
 	```
 
  - Access the OpenShift service using  https://PublicIP:8443 or https://TAG.demo.li9.com
