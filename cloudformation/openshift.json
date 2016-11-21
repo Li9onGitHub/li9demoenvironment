@@ -10,10 +10,10 @@
       "Description": "Unique domain tag",
       "Type": "String",
       "MinLength": "3",
-      "MaxLength": "3",
+      "MaxLength": "12",
       "Default": "abc",
-      "AllowedPattern" : "[a-z][a-z][a-z]",
-      "ConstraintDescription": "[a-z][a-z][a-z]"
+      "AllowedPattern" : "^[a-z][a-z0-9]{2,11}$",
+      "ConstraintDescription": "^[a-z][a-z0-9]{2,11}$"
     }
 
 

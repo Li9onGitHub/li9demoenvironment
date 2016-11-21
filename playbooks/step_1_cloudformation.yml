@@ -43,7 +43,7 @@
         to: "{{email}}"
         from: Li9 Demo <do-not-reply@demo.li9.com>
         body: |
-          The first step of OpenShift configuration is commpleted - AWS Instances were deployed
+          The first step of OpenShift configuration is completed - AWS Instances were deployed
           Please be aware that system is still configuring your OpenShift Enterprise and it will take some time.
           Once it's ready you will receive a new email
           The following information is important to connect to the service:
