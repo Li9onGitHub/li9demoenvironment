@@ -90,23 +90,23 @@ yum -y install ansible git
 	
 	To deploy required instances in AWS run  openshift_install.yml playbook as shown below
 	```
-	ansible-playbook -e 'domaintag=<DOMAINTAG> redhat_user=<REDHATUSER>  redhat_password=<REDHATPASSWORD> aws_access_key=<AWS_ACCESS_KEY> aws_secret_key=<AWS_SECRET_KEY>' playbooks/step_1_cloudformation.yml
+	ansible-playbook -e 'email=<USEREMAIL> domaintag=<DOMAINTAG> redhat_user=<REDHATUSER>  redhat_password=<REDHATPASSWORD> aws_access_key=<AWS_ACCESS_KEY> aws_secret_key=<AWS_SECRET_KEY>' playbooks/step_1_cloudformation.yml
 	```
-	NOTE! The following parameters are mandatory and must be specified:
+NOTE! The following parameters are mandatory and must be specified:
 
-		- **redhat_username** (Red Hat user who has OpenShift subscription)
-		- **redhat_password** (Red Hat password)
-		- **aws_access_key** (AWS ACCESS KEY)
-		- **aws_secret_key** (AWS SECRET ACCESS KEY)
-                - **domaintag**  - omaintag is 3 letters uniqie ID for newly created domain (this means that <domaintag>.demo.li9.com zone will be created)
-        Optional parameters:
-                - **email** - email to send notifications (if it is not send - email will not be sent)
+- **redhat_username** (Red Hat user who has OpenShift subscription)
+- **redhat_password** (Red Hat password)
+- **aws_access_key** (AWS ACCESS KEY)
+- **aws_secret_key** (AWS SECRET ACCESS KEY)
+- **domaintag**  - domaintag is 3 letters uniqie ID for newly created domain (this means that <domaintag>.demo.li9.com zone will be created)
+
+Optional parameters:
+- **email** - email to send notifications (if it is not send - email will not be sent)
 
 	Example:
 	```
 	ansible-playbook -e 'email=myuser@example.com domaintag=yfs redhat_user=someredhatlogin redhat_password=StrongPwd123 aws_access_key=PPAJ2CVAKPCXFOUTHHA aws_secret_key=+QCXt3nHQbR9QUioGg1taLOIGy46V9CtbaRsjimM' playbooks/step_1_cloudformation.yml	
 	```
-		
 
 It will need ~ 25 .. 30  minutes to be completed.  Once it is finished it will be possible to use openshift.  As a part of installation process ansible configures AllowAll Authentication provider. This means that OpenShift will allow all users at the first login.
 
