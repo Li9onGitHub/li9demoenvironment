@@ -1,4 +1,5 @@
 - hosts: localhost
+  connection: local
   become: false
   gather_facts: false
   vars_files:
@@ -8,7 +9,6 @@
      command: cat ~/{{KeyName}}.pem
      register: keybody
      changed_when: false
-     delegate_to: 127.0.0.1
 
    - name: send email that service has been deployed successfully
      mail:
@@ -30,4 +30,3 @@
        Enjoy your demo
        Thank you
        //Li9 team
-     delegate_to: 127.0.0.1
