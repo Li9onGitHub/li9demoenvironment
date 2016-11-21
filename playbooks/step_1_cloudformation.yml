@@ -48,7 +48,7 @@
         ansible_user: ec2-user
         ansible_ssh_private_key_file: ~/{{KeyName}}.pem
         name: "{{item.name}}.{{localdomain}}"
-        ansible_host: "{{ip}}"
+        ansible_host: "{{item.ip}}"
       with_items:
         - { name: node01,   groups: node01,nodes, ip: "{{cfres.stack_outputs.Node01}}" }
         - { name: node02,   groups: node02,nodes, ip: "{{cfres.stack_outputs.Node02}}" }
