@@ -28,6 +28,7 @@ yum -y install ansible git
 - cloudformation
 	This directory contains cloudformation templates
 ```
+
 .
 ├── ansible.cfg
 ├── cloudformation
@@ -35,11 +36,14 @@ yum -y install ansible git
 ├── config.yml
 ├── playbooks
 │   ├── deploy_openshift.yml
+│   ├── step_0_send_startservice_email.yml
+│   ├── step_1_cloudformation.retry
 │   ├── step_1_cloudformation.yml
 │   ├── step_2_register_on_redhat.yml
 │   ├── step_3_apply_openshiftcommon_role.yml
 │   ├── step_4_pre_configure_systems.yml
-│   └── step_5_openshift_install.yml
+│   ├── step_5_openshift_install.yml
+│   └── step_6_send_servicedeployed_email.yml
 ├── README.md
 ├── roles
 │   └── openshiftcommon
@@ -57,6 +61,8 @@ yum -y install ansible git
     ├── ansible.hosts.j2
     ├── iptables.j2
     └── oauth.config.block
+
+
 
 ```
 
@@ -88,25 +94,28 @@ yum -y install ansible git
 	```
 	NOTE! The following parameters are mandatory and must be specified:
 
-		- redhat_username (Red Hat user who has OpenShift subscription)
-		- redhat_password (Red Hat password)
-		- aws_access_key (AWS ACCESS KEY)
-		- aws_secret_key (AWS SECRET ACCESS KEY)
+		- **redhat_username** (Red Hat user who has OpenShift subscription)
+		- **redhat_password** (Red Hat password)
+		- **aws_access_key** (AWS ACCESS KEY)
+		- **aws_secret_key** (AWS SECRET ACCESS KEY)
+                - **domaintag**  - omaintag is 3 letters uniqie ID for newly created domain (this means that <domaintag>.demo.li9.com zone will be created)
+        Optional parameters:
+                - **email** - email to send notifications (if it is not send - email will not be sent)
 
-	NOTE! domaintag is 3 letters uniqie ID for newly created domain (this means that <domaintag>.demo.li9.com zone will be created)
 	Example:
 	```
-	ansible-playbook -e 'domaintag=yfs redhat_user=someuser@somedomain.com redhat_password=StrongPwd123 aws_access_key=PPAJ2CVAKPCXFOUTHHA aws_secret_key=+QCXt3nHQbR9QUioGg1taLOIGy46V9CtbaRsjimM' playbooks/step_1_cloudformation.yml	
+	ansible-playbook -e 'email=myuser@example.com domaintag=yfs redhat_user=someredhatlogin redhat_password=StrongPwd123 aws_access_key=PPAJ2CVAKPCXFOUTHHA aws_secret_key=+QCXt3nHQbR9QUioGg1taLOIGy46V9CtbaRsjimM' playbooks/step_1_cloudformation.yml	
 	```
 		
 
-It will need ~ 25 mins to be completed.  Once it is finished it will be possible to use openshift.  As a part of installation process ansible configures AllowAll Authentication provider. This means that OpenShift will allow all users at the first login.
+It will need ~ 25 .. 30  minutes to be completed.  Once it is finished it will be possible to use openshift.  As a part of installation process ansible configures AllowAll Authentication provider. This means that OpenShift will allow all users at the first login.
 
 
 # Actions and outputs
 
 These automation templates deploys OpenShift with all required AWS infrastrucure items. The templates do the following (TAG is domaintag):
 
+- send user an email notification that the requests is registred
 - create AWS keypair with name idrsa-TAG
 - download private key locally as ~/idrsa-TAG.pem
 - apply cloudformation template cloudformation/openshift.json with the following outputs:
@@ -123,15 +132,20 @@ These automation templates deploys OpenShift with all required AWS infrastrucure
 		- master01.TAG.demo.li9.com
 		- *.TAG.demo.li9.com
 
+- send user an email notification that CloudFormation step is done
 - register each system on Red Hat portal (+apply proper OpenShift-related repositories)
 - do general node configuration:
 	- docker installation and configuration
 	- installation of additional software
 - configure OpenShift installer (create ansible inventory file on master node)
 - run OpenShift installer
+- send user an email notification that demo environment is ready to use
 
 
 # Installation verification
+
+
+If everything is completed successfully user will receive an email which contains all required information to use the environment
 
  - Connect to the master node
  - Check that all nodes exist and registry and router conteiners are up and running

@@ -16,14 +16,14 @@
      retries: 10
      delay: 10
 
-   - debug: var=redhat_subscription
+#   - debug: var=redhat_subscription
 
    - name: get pool ID
      shell: subscription-manager list --available --all|grep "Pool ID:"|awk '{print $3}'
      register: pool_id
      changed_when: false
 
-   - debug: var=pool_id
+#   - debug: var=pool_id
 
    - name: attach system to subscription
      shell: subscription-manager attach --pool {{pool_id.stdout}}
@@ -35,7 +35,7 @@
      changed_when: false
      register: repos
    
-   - debug: var=repos
+#   - debug: var=repos
 
    - name: configing required repositories
      command: subscription-manager repos --disable="*" --enable="rhel-7-server-rpms" --enable="rhel-7-server-extras-rpms"  --enable="rhel-7-server-ose-3.3-rpms"
