@@ -27,7 +27,7 @@
      become: no
      delegate_to: 127.0.0.1
 
-- hosts: all
+- hosts: openshift
   become: true
   vars_files:
     - ../config.yml
