@@ -74,8 +74,8 @@
         name: "{{item.name}}.{{localdomain}}"
         ansible_host: "{{item.ip}}"
       with_items:
-        - { name: node01,   groups: "node01,nodes" ip: "{{cfres.stack_outputs.Node01}}" }
-        - { name: node02,   groups: "node02,nodes" ip: "{{cfres.stack_outputs.Node02}}" }
-        - { name: master01, groups: "master"       ip: "{{cfres.stack_outputs.Master}}" }
+        - { name: node01,   groups: "node01,nodes", ip: "{{cfres.stack_outputs.Node01}}" }
+        - { name: node02,   groups: "node02,nodes", ip: "{{cfres.stack_outputs.Node02}}" }
+        - { name: master01, groups: "master",       ip: "{{cfres.stack_outputs.Master}}" }
       changed_when: false
 
