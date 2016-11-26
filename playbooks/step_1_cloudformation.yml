@@ -21,6 +21,11 @@
         mode: 0600
       when: ec2_key|changed
 
+    - name: get private key information
+      command: cat ~/{{KeyName}}.pem
+      register: private_key
+
+
     - name: launch ansible cloudformation {{StackName}}
       cloudformation:
         stack_name: "{{StackName}}"
@@ -54,7 +59,7 @@
           *) SSH username: ec2-user
           *) SSH access type: only using a private key
           *) SSH private key is shown below:
-          {{ ec2_key.key.private_key }}
+          {{ private_key.stdout }}
           Thank you
           //Li9 team
       when: email is defined
