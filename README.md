@@ -1,4 +1,4 @@
-# li9demoenvironment
+# openshiftdemo
 Li9 Customer Demo Environment
 
 
