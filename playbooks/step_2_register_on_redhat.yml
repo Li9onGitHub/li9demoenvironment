@@ -7,8 +7,8 @@
     - ../config.yml
   tasks:
 
-#   - name: set fixed hostname
-#     hostname: name={{inventory_hostname}}
+   - name: set fixed hostname
+     hostname: name={{inventory_hostname}}
 
    - name: register host on redhat
      command: subscription-manager register --username='{{redhat_user}}' --password='{{redhat_password}}' --auto-attach --force
