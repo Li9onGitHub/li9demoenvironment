@@ -1,0 +1,17 @@
+---
+- hosts: openshift
+  become: true
+  gather_facts: false
+  vars_files:
+    - ../config.yml
+  tasks:
+
+
+   - name: unregister host on redhat
+     command: subscription-manager unregister
+
+#     register: redhat_subscription
+#     until: (redhat_subscription.stdout.find('System already registered') != -1 or redhat_subscription.rc == 0)
+#     retries: 10
+#     delay: 10
+

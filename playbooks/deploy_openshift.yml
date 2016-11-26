@@ -17,12 +17,6 @@
       - 1
       - 1
 
-   - name: display OS
-     command: uname -a
-     register: uname_results
-
-   - debug:  var=uname_results
-
 - include: step_2_register_on_redhat.yml
   tags: redhat
 
@@ -37,4 +31,7 @@
 
 - include: step_6_send_servicedeployed_email.yml
   when: email is defined
+
+- include: step_7_unregister_on_redhat.yml
+  tags: redhat
 
