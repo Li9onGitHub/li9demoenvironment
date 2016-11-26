@@ -1,5 +1,5 @@
 # openshiftdemo
-Li9 Customer Demo Environment
+OpenShift demo deployment automation
 
 
 This project automates initial configuration of OpenShift 3.x nodes (masters and nodes) at AWS environment
