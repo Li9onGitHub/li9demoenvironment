@@ -1,0 +1,29 @@
+---
+
+- hosts: all
+  gather_facts: False
+  tasks:
+    # This task is a tick to make playbook completed successfully.
+    # Further it must implement tasks for removing existing CloudFormation 
+    # template
+    - name: Ping
+      command: uname -a
+
+
+#    - name: launch ansible cloudformation {{StackName}}
+#      cloudformation:
+#        stack_name: "{{StackName}}"
+#        state: "present"
+#        region: "us-east-1"
+#        disable_rollback: true
+#        template: "../cloudformation/openshift.json"
+#        aws_access_key: "{{aws_access_key}}"
+#        aws_secret_key: "{{aws_secret_key}}"
+#        template_parameters:
+#          KeyName: "{{KeyName}}"
+#          domaintag: "{{domaintag}}"
+#        tags:
+#          Stack: "{{StackName}}"
+#      register: cfres
+
+
