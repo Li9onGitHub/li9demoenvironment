@@ -6,6 +6,11 @@
     - ../config.yml
   tasks:
 
+   - include_vars: "{{ item }}"
+     with_first_found:
+      - ~/ansible_external_variables.yml
+     ignore_errors: true
+
    - name: set fixed hostname
      hostname: name={{inventory_hostname}}
 

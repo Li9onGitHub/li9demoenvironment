@@ -1,5 +1,5 @@
 ---
-domaintag:              ddh
+domaintag:              tdomaintag
 publicdomain:           "{{domaintag}}.demo.li9.com"
 localdomain:            "{{domaintag}}.li9.local"
 KeyName:                "idrsa-{{domaintag}}"
