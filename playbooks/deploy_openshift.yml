@@ -35,3 +35,5 @@
 - include: step_7_unregister_on_redhat.yml
   tags: redhat
 
+- include: step_8_delete_aws_keypair.yml
+  tags: aws

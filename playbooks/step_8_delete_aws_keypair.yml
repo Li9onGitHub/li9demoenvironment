@@ -1,0 +1,22 @@
+---
+- hosts: localhost
+  connection: local
+  gather_facts: false
+  become: false
+  vars_files:
+    - ../config.yml
+  tasks:
+
+    - include_vars: "{{ item }}"
+      with_first_found:
+       - ~/ansible_external_variables.yml
+      ignore_errors: true
+
+    - name: create key pair {{KeyName}}
+      ec2_key:
+        name: "{{KeyName}}"
+        ec2_region: us-east-1
+        aws_access_key: "{{aws_access_key}}"
+        aws_secret_key: "{{aws_secret_key}}"
+        state: absent
+
